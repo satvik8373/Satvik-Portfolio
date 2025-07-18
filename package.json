@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --legacy-peer-deps",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
@@ -34,5 +34,8 @@
     "tailwindcss": "^3.3.5",
     "vite": "^4.5.0",
     "vite-plugin-pwa": "^0.16.7"
+  },
+  "overrides": {
+    "three": "^0.159.0"
   }
 }
