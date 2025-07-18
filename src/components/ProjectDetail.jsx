@@ -220,8 +220,8 @@ const ProjectDetail = () => {
         </div>
       )}
 
-      {/* Side navigation */}
-      <div className="fixed left-4 top-1/2 -translate-y-1/2 z-40">
+      {/* Side navigation - Hidden on mobile */}
+      <div className="fixed left-4 top-1/2 -translate-y-1/2 z-40 hidden md:block">
         <div className="bg-black/10 backdrop-blur-sm rounded-full py-4 px-2 border border-white/10">
           <div className="flex flex-col items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"></div>
@@ -238,7 +238,7 @@ const ProjectDetail = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-[48px] font-semibold text-white mb-4 leading-tight text-shadow-sm"
+            className="text-[32px] md:text-[48px] font-semibold text-white mb-4 leading-tight text-shadow-sm"
           >
             {project.title}
           </motion.h1>
@@ -247,7 +247,7 @@ const ProjectDetail = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-[20px] text-white/70 whitespace-pre-line leading-7 text-shadow-sm"
+            className="text-[16px] md:text-[20px] text-white/70 whitespace-pre-line leading-7 text-shadow-sm"
           >
             {project.description}
           </motion.p>
@@ -263,7 +263,7 @@ const ProjectDetail = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="w-full h-[720px] rounded-[40px] overflow-hidden relative"
+          className="w-full h-[300px] md:h-[500px] lg:h-[720px] rounded-[20px] md:rounded-[40px] overflow-hidden relative"
         >
           {/* Background image with overlay */}
           <img 
@@ -274,17 +274,17 @@ const ProjectDetail = () => {
           <div className={`absolute inset-0 z-10 opacity-80 ${headerGradientClass}`}></div>
           
           {/* Content */}
-          <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
             <div className="text-center">
-              <h2 className="text-[80px] font-black text-white text-shadow-md">{project.title}</h2>
-              <p className="text-[32px] text-white/70 mt-2 font-semibold text-shadow-sm">{project.subtitle}</p>
+              <h2 className="text-[40px] md:text-[60px] lg:text-[80px] font-black text-white text-shadow-md">{project.title}</h2>
+              <p className="text-[18px] md:text-[24px] lg:text-[32px] text-white/70 mt-2 font-semibold text-shadow-sm">{project.subtitle}</p>
               
               {project.externalLink && (
                 <a 
                   href={project.externalLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 mt-6 bg-black/30 backdrop-blur-sm px-5 py-2 rounded-full text-white hover:bg-black/50 transition-colors border border-white/10"
+                  className="inline-flex items-center gap-2 mt-4 md:mt-6 bg-black/30 backdrop-blur-sm px-3 md:px-5 py-1.5 md:py-2 rounded-full text-white hover:bg-black/50 transition-colors border border-white/10 text-sm md:text-base"
                 >
                   <span>Visit Live Site</span>
                   <ExternalLink size={16} />
@@ -295,23 +295,23 @@ const ProjectDetail = () => {
         </motion.div>
 
         {/* Control buttons */}
-        <div className="mt-6 flex gap-2 justify-center bg-[#15161a]/60 backdrop-blur-sm py-4 px-6 rounded-2xl w-fit mx-auto">
-          <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-white/80 text-sm border border-white/10 transition-colors">
+        <div className="mt-6 flex gap-2 justify-center bg-[#15161a]/60 backdrop-blur-sm py-2 md:py-4 px-4 md:px-6 rounded-xl md:rounded-2xl w-fit mx-auto overflow-x-auto">
+          <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm px-3 md:px-4 py-1.5 rounded-full text-white/80 text-xs md:text-sm border border-white/10 transition-colors whitespace-nowrap">
             Overview
           </button>
-          <button className="bg-black/10 hover:bg-black/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-white/60 text-sm border border-white/5 transition-colors">
+          <button className="bg-black/10 hover:bg-black/20 backdrop-blur-sm px-3 md:px-4 py-1.5 rounded-full text-white/60 text-xs md:text-sm border border-white/5 transition-colors whitespace-nowrap">
             Features
           </button>
-          <button className="bg-black/10 hover:bg-black/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-white/60 text-sm border border-white/5 transition-colors">
+          <button className="bg-black/10 hover:bg-black/20 backdrop-blur-sm px-3 md:px-4 py-1.5 rounded-full text-white/60 text-xs md:text-sm border border-white/5 transition-colors whitespace-nowrap">
             Gallery
           </button>
         </div>
 
         {/* Project content */}
         {project.projectItems.length > 0 && (
-          <div className="mt-32 grid grid-cols-1 md:grid-cols-12 gap-8">
-            <div className="md:col-span-5 flex flex-col gap-6">
-              <div className="aspect-[4/3] bg-white/10 rounded-3xl overflow-hidden">
+          <div className="mt-16 md:mt-32 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8">
+            <div className="md:col-span-5 flex flex-col gap-4 md:gap-6">
+              <div className="aspect-[4/3] bg-white/10 rounded-xl md:rounded-3xl overflow-hidden">
                 <img 
                   src={project.image} 
                   alt={project.title} 
@@ -319,7 +319,7 @@ const ProjectDetail = () => {
                 />
               </div>
               {project.sections && project.sections[0] && (
-                <div className="aspect-[4/3] bg-white/10 rounded-3xl mt-8 overflow-hidden">
+                <div className="aspect-[4/3] bg-white/10 rounded-xl md:rounded-3xl mt-4 md:mt-8 overflow-hidden">
                   <img 
                     src={project.sections[0].image} 
                     alt={project.sections[0].title} 
@@ -329,19 +329,19 @@ const ProjectDetail = () => {
               )}
             </div>
             
-            <div className="md:col-span-7">
-              <h3 className="text-[48px] font-semibold text-white mb-6 leading-tight text-shadow-sm">{project.projectItems[0].title}</h3>
-              <p className="text-[24px] text-white/80 whitespace-pre-line mb-6 leading-8 text-shadow-sm">{project.projectItems[0].content}</p>
+            <div className="md:col-span-7 mt-6 md:mt-0">
+              <h3 className="text-[28px] md:text-[36px] lg:text-[48px] font-semibold text-white mb-3 md:mb-6 leading-tight text-shadow-sm">{project.projectItems[0].title}</h3>
+              <p className="text-[16px] md:text-[20px] lg:text-[24px] text-white/80 whitespace-pre-line mb-4 md:mb-6 leading-7 md:leading-8 text-shadow-sm">{project.projectItems[0].content}</p>
               
               {project.projectItems[0].link && (
                 <a 
                   href={project.projectItems[0].link} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 bg-black/10 hover:bg-black/20 px-4 py-1.5 rounded-full text-white/80 text-sm border border-white/10 transition-colors hover:text-white hover:border-white/20"
+                  className="inline-flex items-center gap-1.5 bg-black/10 hover:bg-black/20 px-3 md:px-4 py-1.5 rounded-full text-white/80 text-xs md:text-sm border border-white/10 transition-colors hover:text-white hover:border-white/20"
                 >
                   {project.projectItems[0].linkText}
-                  <ExternalLink size={14} />
+                  <ExternalLink size={12} className="md:size-14" />
                 </a>
               )}
             </div>
@@ -350,14 +350,14 @@ const ProjectDetail = () => {
 
         {/* Content sections */}
         {project.sections.map((section, index) => (
-          <div key={index} className="mt-32">
-            <div className={`text-${section.alignment} max-w-4xl mx-auto`}>
-              <h3 className="text-[48px] font-semibold text-white mb-6 leading-tight text-shadow-sm">{section.title}</h3>
-              <p className="text-[24px] text-white/80 leading-8 text-shadow-sm">{section.description}</p>
+          <div key={index} className="mt-16 md:mt-32">
+            <div className={`text-${section.alignment} max-w-4xl mx-auto px-2 md:px-0`}>
+              <h3 className="text-[28px] md:text-[36px] lg:text-[48px] font-semibold text-white mb-3 md:mb-6 leading-tight text-shadow-sm">{section.title}</h3>
+              <p className="text-[16px] md:text-[20px] lg:text-[24px] text-white/80 leading-7 md:leading-8 text-shadow-sm">{section.description}</p>
             </div>
             
-            <div className="mt-16">
-              <div className="bg-white/10 border border-white/10 rounded-[40px] h-[866px] w-full overflow-hidden">
+            <div className="mt-8 md:mt-16">
+              <div className="bg-white/10 border border-white/10 rounded-[20px] md:rounded-[40px] h-[240px] sm:h-[400px] md:h-[600px] lg:h-[866px] w-full overflow-hidden">
                 {section.image && (
                   <img 
                     src={section.image} 
@@ -371,11 +371,11 @@ const ProjectDetail = () => {
         ))}
 
         {/* Image grid section */}
-        <div className="mt-32 relative">
+        <div className="mt-16 md:mt-32 relative">
           <div className="absolute inset-0 -z-10 opacity-30">
-            <div className="grid grid-cols-3 gap-4 h-full">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 h-full">
               {project.sections && project.sections.slice(0, 9).map((section, i) => (
-                <div key={i} className="bg-white/10 rounded-3xl overflow-hidden">
+                <div key={i} className="bg-white/10 rounded-xl md:rounded-3xl overflow-hidden">
                   {section.image && (
                     <img 
                       src={section.image} 
@@ -388,16 +388,16 @@ const ProjectDetail = () => {
             </div>
           </div>
           
-          <div className="text-center max-w-4xl mx-auto py-16">
-            <h3 className="text-[48px] font-semibold text-white mb-6 leading-tight text-shadow-sm">Project Gallery</h3>
-            <p className="text-[24px] text-white/80 leading-8 text-shadow-sm">A collection of images showcasing various aspects of the {project.title} project, highlighting key features and design elements.</p>
+          <div className="text-center max-w-4xl mx-auto py-8 md:py-16 px-2 md:px-0">
+            <h3 className="text-[28px] md:text-[36px] lg:text-[48px] font-semibold text-white mb-3 md:mb-6 leading-tight text-shadow-sm">Project Gallery</h3>
+            <p className="text-[16px] md:text-[20px] lg:text-[24px] text-white/80 leading-7 md:leading-8 text-shadow-sm">A collection of images showcasing various aspects of the {project.title} project, highlighting key features and design elements.</p>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="max-w-5xl mx-auto px-4 py-8 text-center mt-16 border-t border-white/10">
-        <p className="text-white/40 text-sm">{project.title} - Portfolio Project</p>
+      <div className="max-w-5xl mx-auto px-4 py-6 md:py-8 text-center mt-8 md:mt-16 border-t border-white/10">
+        <p className="text-white/40 text-xs md:text-sm">{project.title} - Portfolio Project</p>
       </div>
     </div>
   );
