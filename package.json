@@ -6,33 +6,33 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --legacy-peer-deps",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "@react-three/drei": "^10.5.1",
-    "@react-three/fiber": "^9.2.0",
+    "@react-three/drei": "^9.88.17",
+    "@react-three/fiber": "^8.15.11",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^5.5.0",
-    "react-router-dom": "^7.7.0",
-    "three": "^0.178.0"
+    "react-icons": "^4.12.0",
+    "react-router-dom": "^6.20.0",
+    "three": "^0.159.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@vitejs/plugin-react": "^4.1.0",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.4.16",
     "eslint": "^8.53.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17",
-    "vite": "^7.0.5",
-    "vite-plugin-pwa": "^1.0.1"
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "vite": "^4.5.0",
+    "vite-plugin-pwa": "^0.16.7"
   }
 }
