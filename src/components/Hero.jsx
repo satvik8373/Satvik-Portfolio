@@ -1,8 +1,11 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Download, Mail } from 'lucide-react'
+import { useTheme } from '../context/ThemeContext'
 
 const Hero = () => {
+  const { isDarkMode } = useTheme()
+  
   return (
     <section id="home" className="min-h-screen flex items-center justify-center pt-24 px-6">
       <div className="max-w-7xl mx-auto text-center">
@@ -43,7 +46,7 @@ const Hero = () => {
 
         {/* About Text */}
         <motion.p
-          className="text-text-secondary font-light text-lg md:text-xl max-w-2xl mx-auto mb-14 leading-relaxed"
+          className="text-secondary font-light text-lg md:text-xl max-w-2xl mx-auto mb-14 leading-relaxed theme-transition"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -60,11 +63,21 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <a href="mailto:satvikpatel8373@gmail.com" className="bg-white text-primary-bg px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all duration-300 flex items-center gap-3 min-w-[195px] justify-center shadow-lg shadow-white/10 hover:shadow-white/20">
+          <a 
+            href="mailto:satvikpatel8373@gmail.com" 
+            className="bg-white text-primary-bg px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 theme-transition flex items-center gap-3 min-w-[195px] justify-center shadow-lg focus-theme"
+            style={{ 
+              backgroundColor: isDarkMode ? 'white' : 'rgb(var(--color-bg-tertiary))',
+              color: isDarkMode ? 'rgb(var(--color-bg-primary))' : 'rgb(var(--color-text-primary))'
+            }}
+          >
             <Mail size={20} strokeWidth={2.5} />
             Get In Touch
           </a>
-          <a href="#" className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-primary-bg transition-all duration-300 flex items-center gap-3 min-w-[204px] justify-center hover:shadow-lg hover:shadow-white/10">
+          <a 
+            href="#" 
+            className="border-2 px-8 py-4 rounded-full font-semibold text-lg theme-transition flex items-center gap-3 min-w-[204px] justify-center hover:shadow-lg focus-theme border-primary text-primary hover-bg-secondary"
+          >
             <Download size={20} strokeWidth={2.5} />
             Download CV
           </a>
@@ -72,7 +85,7 @@ const Hero = () => {
 
         {/* Contact Info */}
         <motion.div
-          className="mt-8 text-text-secondary text-sm flex flex-wrap justify-center gap-x-6 gap-y-2"
+          className="mt-8 text-secondary text-sm flex flex-wrap justify-center gap-x-6 gap-y-2 theme-transition"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}

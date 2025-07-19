@@ -1,7 +1,9 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useTheme } from '../context/ThemeContext'
 
 const TechStack = () => {
+  const { isDarkMode } = useTheme()
   // This component could be merged with About, but keeping it separate as per App.jsx structure
   const techCategories = [
     {
@@ -40,14 +42,14 @@ const TechStack = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.2 }}
                 viewport={{ once: true }}
-                className="bg-primary-card/50 p-6 rounded-xl"
+                className="bg-secondary/50 p-6 rounded-xl border-primary border theme-transition"
               >
-                <h3 className="text-xl font-semibold mb-4 text-gradient-orange bg-clip-text text-transparent inline-block">
+                <h3 className="text-xl font-semibold mb-4 bg-gradient-orange-purple bg-clip-text text-transparent inline-block">
                   {category.title}
                 </h3>
                 <div className="flex flex-wrap gap-3 justify-center">
                   {category.techs.map(tech => (
-                    <span key={tech} className="px-4 py-2 bg-primary-bg rounded-full text-sm text-text-secondary">
+                    <span key={tech} className="px-4 py-2 bg-primary rounded-full text-sm text-secondary theme-transition border-primary border">
                       {tech}
                     </span>
                   ))}

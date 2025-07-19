@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Moon, Sun, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
+import { useTheme } from '../context/ThemeContext'
+import ThemeToggle from './ThemeToggle'
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(true)
   const [activeSection, setActiveSection] = useState('home')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { isDarkMode } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,11 +38,7 @@ const Header = () => {
     setMobileMenuOpen(false)
   }
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode)
-    // You would implement actual dark mode toggle functionality here
-    // document.documentElement.classList.toggle('dark')
-  }
+
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
@@ -66,9 +64,9 @@ const Header = () => {
           <motion.div 
             className={`backdrop-blur-md ${
               isScrolled 
-                ? 'bg-white/10 border border-white/20 shadow-lg' 
+                ? 'glass-card shadow-lg' 
                 : 'bg-transparent'
-            } rounded-full px-4 sm:px-6 py-2 flex items-center justify-between transition-all duration-300`}
+            } rounded-full px-4 sm:px-6 py-2 flex items-center justify-between theme-transition`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
@@ -89,7 +87,7 @@ const Header = () => {
                   className={`${isScrolled ? 'w-8 h-8' : 'w-10 h-10'} object-contain transition-all duration-300`} 
                 />
                 <motion.div 
-                  className={`ml-2 font-jakarta font-bold text-white transition-all duration-300 flex items-center ${
+                  className={`ml-2 font-jakarta font-bold text-primary theme-transition flex items-center ${
                     isScrolled ? 'text-sm' : 'text-base'
                   }`}
                   animate={{ opacity: 1 }}
@@ -108,12 +106,12 @@ const Header = () => {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`font-jakarta font-semibold transition-colors duration-300 ${isScrolled ? 'text-sm' : 'text-base'} tracking-wider relative group ${
-                    activeSection === item.id ? 'text-indigo-400' : 'text-white hover:text-white/80'
-                  } transition-all`}
+                  className={`font-jakarta font-semibold ${isScrolled ? 'text-sm' : 'text-base'} tracking-wider relative group ${
+                    activeSection === item.id ? 'text-accent-blue' : 'text-primary hover-text-primary'
+                  } theme-transition focus-theme`}
                 >
                   {item.name}
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 ${
+                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-orange-purple theme-transition ${
                     activeSection === item.id ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </button>
@@ -121,29 +119,25 @@ const Header = () => {
             </nav>
 
             <div className="flex items-center space-x-2">
-              {/* Dark mode toggle */}
-              <motion.button 
-                onClick={toggleDarkMode}
-                className={`${
-                  isScrolled ? 'w-8 h-8' : 'w-10 h-10'
-                } rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 hover:bg-white/20 transition-all duration-300`}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+              {/* Theme toggle */}
+              <motion.div
                 animate={{ scale: isScrolled ? 0.9 : 1 }}
+                transition={{ duration: 0.3 }}
               >
-                {isDarkMode ? <Sun size={isScrolled ? 16 : 18} /> : <Moon size={isScrolled ? 16 : 18} />}
-              </motion.button>
+                <ThemeToggle size={isScrolled ? 'sm' : 'md'} />
+              </motion.div>
 
               {/* Mobile menu button - now using Lucide icons */}
               <motion.button 
-                className="md:hidden flex items-center justify-center text-white"
+                className="md:hidden flex items-center justify-center text-primary focus-theme"
                 onClick={toggleMobileMenu}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               >
                 <div className={`${
                   isScrolled ? 'w-8 h-8' : 'w-10 h-10'
-                } rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 hover:bg-white/20 transition-all duration-300`}>
+                } rounded-full glass-card flex items-center justify-center hover-bg-secondary theme-transition`}>
                   {mobileMenuOpen ? 
                     <X size={isScrolled ? 16 : 18} /> : 
                     <Menu size={isScrolled ? 16 : 18} />
@@ -159,7 +153,8 @@ const Header = () => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div 
-            className="fixed inset-0 z-40 bg-black/80 backdrop-blur-md flex items-center justify-center"
+            className="fixed inset-0 z-40 backdrop-blur-md flex items-center justify-center theme-transition"
+            style={{ backgroundColor: 'rgba(var(--color-bg-primary), 0.9)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -167,7 +162,7 @@ const Header = () => {
           >
             <motion.div className="text-center mb-8">
               <motion.h2 
-                className="text-white text-3xl font-bold mb-2"
+                className="text-primary text-3xl font-bold mb-2"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
@@ -175,7 +170,7 @@ const Header = () => {
                 Satvik Patel
               </motion.h2>
               <motion.p 
-                className="text-white/70 text-sm"
+                className="text-secondary text-sm"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
@@ -196,13 +191,13 @@ const Header = () => {
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
                   className={`font-jakarta font-semibold text-2xl tracking-wider relative group ${
-                    activeSection === item.id ? 'text-indigo-400' : 'text-white'
-                  }`}
+                    activeSection === item.id ? 'text-accent-blue' : 'text-primary'
+                  } theme-transition focus-theme`}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   {item.name}
-                  <span className={`absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 ${
+                  <span className={`absolute -bottom-2 left-0 h-1 bg-gradient-orange-purple theme-transition ${
                     activeSection === item.id ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </motion.button>

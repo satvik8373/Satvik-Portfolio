@@ -1,7 +1,10 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useTheme } from '../context/ThemeContext'
 
 const ExperienceItem = ({ title, period, description, logo, delay, isEducation }) => {
+  const { isDarkMode } = useTheme()
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -11,26 +14,46 @@ const ExperienceItem = ({ title, period, description, logo, delay, isEducation }
       className="mb-16 last:mb-0 relative"
     >
       <div className="flex flex-col md:flex-row gap-6 items-start">
-        <div className={`flex-shrink-0 w-10 h-10 ${isEducation ? 'bg-gradient-orange-purple' : 'bg-primary-card'} rounded-full flex items-center justify-center shadow-lg ${isEducation ? 'shadow-gradient-orange/10' : 'shadow-gradient-blue/10'} border ${isEducation ? 'border-gradient-orange/20' : 'border-gradient-blue/20'} z-10`}>
-          {logo || <span className="text-white font-bold text-sm">{isEducation ? '🎓' : title.charAt(0)}</span>}
+        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg border z-10 theme-transition ${
+          isEducation 
+            ? 'bg-gradient-orange-purple shadow-gradient-orange/10 border-gradient-orange/20' 
+            : 'bg-secondary shadow-gradient-blue/10 border-primary'
+        }`}>
+          {logo || <span className={`font-bold text-sm theme-transition ${
+            isEducation 
+              ? 'text-white' 
+              : isDarkMode 
+                ? 'text-white' 
+                : 'text-primary'
+          }`}>{isEducation ? '🎓' : title.charAt(0)}</span>}
         </div>
         
         <div className="flex-grow">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-3">
-            <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight">{title}</h3>
-            <span className={`text-text-muted text-sm md:text-base font-medium ${isEducation ? 'bg-gradient-orange-purple/20' : 'bg-primary-card'} px-4 py-1 rounded-full mt-2 md:mt-0`}>{period}</span>
+            <h3 className="text-xl md:text-2xl font-bold text-primary tracking-tight theme-transition">{title}</h3>
+            <span className={`text-sm md:text-base font-medium px-4 py-1 rounded-full mt-2 md:mt-0 theme-transition ${
+              isEducation 
+                ? 'bg-gradient-orange-purple/20 text-white' 
+                : 'bg-secondary text-secondary'
+            }`}>{period}</span>
           </div>
-          <p className="text-text-muted text-base leading-relaxed">{description}</p>
+          <p className="text-muted text-base leading-relaxed theme-transition">{description}</p>
         </div>
       </div>
       
       {/* Timeline connector */}
-      <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-gradient-to-b from-gradient-blue/30 to-transparent h-full -z-10"></div>
+      <div 
+        className="absolute left-5 top-10 bottom-0 w-0.5 h-full -z-10 theme-transition"
+        style={{
+          background: `linear-gradient(to bottom, rgba(var(--color-accent-blue), 0.3), transparent)`
+        }}
+      ></div>
     </motion.div>
   )
 }
 
 const Experience = () => {
+  const { isDarkMode } = useTheme()
   const experiences = [
     {
       title: 'Web Developer at Spread Me Digital',
@@ -76,6 +99,7 @@ const Experience = () => {
               description={exp.description}
               logo={exp.logo}
               delay={index * 0.1}
+              isEducation={exp.isEducation}
             />
           ))}
         </div>
