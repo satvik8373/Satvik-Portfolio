@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from '../utils/gsapConfig';
-import { ScrollTrigger, ScrollToPlugin } from '../utils/gsapConfig';
+import { ScrollTrigger, ScrollToPlugin, ScrollSmoother } from '../utils/gsapConfig';
 import './GooeyIntro.css';
 
 const GooeyIntro = ({ onIntroComplete, children }) => {
@@ -12,6 +12,7 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
   const [introComplete, setIntroComplete] = useState(false);
   const [webglReady, setWebglReady] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const smootherRef = useRef(null);
   
   const devicePixelRatio = Math.min(window.devicePixelRatio, 2);
   const params = {
@@ -214,19 +215,8 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
     const handleScroll = (e) => {
       if (introComplete) return;
       
-      // Calculate scroll progress with force detection
-      const scrollForce = Math.abs(e.deltaY);
-      let sensitivity = 0.5;
-      
-      // Detect force swipe - if scrolling fast, increase sensitivity
-      if (scrollForce > 50) {
-        sensitivity = 1.2; // Force swipe gets higher sensitivity
-        triggerHaptic('medium'); // Haptic feedback for force scroll
-      } else if (scrollForce > 25) {
-        sensitivity = 0.8; // Medium force
-      }
-      
-      scrollY += e.deltaY * sensitivity;
+      // Calculate scroll progress
+      scrollY += e.deltaY * 0.5; // Reduce scroll sensitivity
       scrollY = Math.max(0, Math.min(scrollY, maxScroll));
       
       updateProgress(scrollY);
@@ -238,42 +228,11 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
     let lastTouchY = 0;
     let touchMoved = false;
     
-    // Haptic feedback function
-    const triggerHaptic = (type = 'light') => {
-      if ('vibrate' in navigator) {
-        switch (type) {
-          case 'light':
-            navigator.vibrate(10);
-            break;
-          case 'medium':
-            navigator.vibrate(20);
-            break;
-          case 'heavy':
-            navigator.vibrate(30);
-            break;
-          default:
-            navigator.vibrate(10);
-        }
-      }
-      
-      // Visual haptic feedback on scroller
-      const scrollerOuter = document.querySelector('.scroller-outer');
-      if (scrollerOuter) {
-        scrollerOuter.classList.add('haptic');
-        setTimeout(() => {
-          scrollerOuter.classList.remove('haptic');
-        }, 200);
-      }
-    };
-    
     const handleTouchStart = (e) => {
       touchStartY = e.touches[0].clientY;
       lastTouchY = touchStartY;
       touchStartTime = Date.now();
       touchMoved = false;
-      
-      // Light haptic feedback on touch start
-      triggerHaptic('light');
     };
     
     const handleTouchMove = (e) => {
@@ -287,17 +246,7 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
         touchMoved = true;
         
         // Much more sensitive for mobile - one good swipe should complete most of the animation
-        let touchSensitivity = 1.2;
-        
-        // Detect force swipe on mobile
-        if (Math.abs(deltaY) > 30) {
-          touchSensitivity = 2.0; // Force swipe gets much higher sensitivity
-          triggerHaptic('medium'); // Haptic feedback for force swipe
-        } else if (Math.abs(deltaY) > 15) {
-          touchSensitivity = 1.5; // Medium force
-        }
-        
-        scrollY += deltaY * touchSensitivity;
+        scrollY += deltaY * 1.2; // Increased sensitivity
         scrollY = Math.max(0, Math.min(scrollY, maxScroll));
         
         updateProgress(scrollY);
@@ -314,25 +263,16 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       const swipeDuration = touchEndTime - touchStartTime;
       const totalSwipeDistance = touchStartY - lastTouchY;
       
-              // Add momentum for natural feel
-        if (swipeDuration < 500 && Math.abs(totalSwipeDistance) > 30) {
-          // Calculate momentum based on swipe speed and distance
-          const swipeSpeed = Math.abs(totalSwipeDistance) / swipeDuration;
-          const momentum = totalSwipeDistance * swipeSpeed * 0.8;
-          
-          scrollY += momentum;
-          scrollY = Math.max(0, Math.min(scrollY, maxScroll));
-          updateProgress(scrollY);
-          
-          // Haptic feedback based on swipe intensity
-          if (Math.abs(totalSwipeDistance) > 100) {
-            triggerHaptic('heavy');
-          } else if (Math.abs(totalSwipeDistance) > 50) {
-            triggerHaptic('medium');
-          } else {
-            triggerHaptic('light');
-          }
-        }
+      // Add momentum for natural feel
+      if (swipeDuration < 500 && Math.abs(totalSwipeDistance) > 30) {
+        // Calculate momentum based on swipe speed and distance
+        const swipeSpeed = Math.abs(totalSwipeDistance) / swipeDuration;
+        const momentum = totalSwipeDistance * swipeSpeed * 0.8;
+        
+        scrollY += momentum;
+        scrollY = Math.max(0, Math.min(scrollY, maxScroll));
+        updateProgress(scrollY);
+      }
     };
     
     // Common function to update progress and animations
@@ -341,29 +281,11 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       const isMobile = window.innerWidth <= 768;
       let progress = currentScrollY / maxScroll;
       
-              // On mobile, make the progress feel more natural
-        if (isMobile) {
-          // Apply easing curve for better mobile experience
-          progress = Math.pow(progress, 0.8); // Makes early progress faster
-          
-          // Haptic feedback at progress milestones
-          const oldProgress = params.scrollProgress;
-          const newProgress = progress;
-          
-          // Trigger haptic at 25%, 50%, 75% milestones
-          if (oldProgress < 0.25 && newProgress >= 0.25) {
-            triggerHaptic('medium');
-          } else if (oldProgress < 0.5 && newProgress >= 0.5) {
-            triggerHaptic('medium');
-          } else if (oldProgress < 0.75 && newProgress >= 0.75) {
-            triggerHaptic('medium');
-          }
-          
-          // Heavy haptic when completing
-          if (oldProgress < 0.95 && newProgress >= 0.95) {
-            triggerHaptic('heavy');
-          }
-        }
+      // On mobile, make the progress feel more natural
+      if (isMobile) {
+        // Apply easing curve for better mobile experience
+        progress = Math.pow(progress, 0.8); // Makes early progress faster
+      }
       
       params.scrollProgress = progress;
       
@@ -436,6 +358,16 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       gsap.set(pageRef.current, { opacity: 1 });
     }
 
+    // Initialize ScrollSmoother for smooth scrolling
+    if (ScrollSmoother) {
+      smootherRef.current = ScrollSmoother.create({
+        smooth: 1.5,
+        effects: true,
+        normalizeScroll: true,
+        ignoreMobileResize: true
+      });
+    }
+
     // Set up event listeners
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("wheel", handleScroll, { passive: false });
@@ -453,6 +385,11 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      
+      // Clean up ScrollSmoother
+      if (smootherRef.current) {
+        smootherRef.current.kill();
+      }
     };
   }, [onIntroComplete, introComplete]);
 
@@ -528,77 +465,7 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
           </div>
         )}
         
-        {/* Mobile Swipe Progress Indicator */}
-        {window.innerWidth <= 768 && (
-          <div 
-            className="mobile-scroller"
-            style={{
-              position: 'fixed',
-              bottom: '40px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1002
-            }}
-          >
-            {/* Outer circle */}
-            <div 
-              className="scroller-outer"
-              style={{
-                width: '60px',
-                height: '60px',
-                borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '2px solid rgba(255, 255, 255, 0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backdropFilter: 'blur(10px)'
-              }}
-            >
-              {/* Inner progress circle */}
-              <div 
-                className="scroller-inner"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: `conic-gradient(from 0deg, rgba(255, 110, 94, 0.8) 0deg, rgba(255, 110, 94, 0.8) ${params.scrollProgress * 360}deg, rgba(255, 255, 255, 0.2) ${params.scrollProgress * 360}deg)`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.1s ease'
-                }}
-              >
-                {/* Center icon */}
-                <div 
-                  className="scroller-icon"
-                  style={{
-                    fontSize: '16px',
-                    color: '#333',
-                    transform: `rotate(${params.scrollProgress * 360}deg)`,
-                    transition: 'transform 0.1s ease'
-                  }}
-                >
-                  ↑
-                </div>
-              </div>
-            </div>
-            
-            {/* Swipe hint text */}
-            <div 
-              className="scroller-hint"
-              style={{
-                marginTop: '8px',
-                fontSize: '10px',
-                color: 'rgba(255, 255, 255, 0.7)',
-                textAlign: 'center',
-                textShadow: '0 1px 2px rgba(0,0,0,0.3)'
-              }}
-            >
-              Swipe up
-            </div>
-          </div>
-        )}
+
         
       </div>
       
