@@ -224,37 +224,50 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
     // Touch/swipe handler for mobile
     let touchStartY = 0;
     let touchStartTime = 0;
+    let lastTouchY = 0;
+    let touchMoved = false;
     
     const handleTouchStart = (e) => {
       touchStartY = e.touches[0].clientY;
+      lastTouchY = touchStartY;
       touchStartTime = Date.now();
+      touchMoved = false;
     };
     
     const handleTouchMove = (e) => {
       if (introComplete) return;
       
       const touchY = e.touches[0].clientY;
-      const deltaY = touchStartY - touchY; // Positive = swipe up
+      const deltaY = lastTouchY - touchY; // Positive = swipe up
       
-      // Only respond to vertical swipes
-      if (Math.abs(deltaY) > 10) {
-        scrollY += deltaY * 0.3; // Adjust sensitivity for touch
+      // Only respond to significant vertical swipes
+      if (Math.abs(deltaY) > 5) {
+        touchMoved = true;
+        
+        // Much more sensitive for mobile - one good swipe should complete most of the animation
+        scrollY += deltaY * 1.2; // Increased sensitivity
         scrollY = Math.max(0, Math.min(scrollY, maxScroll));
         
         updateProgress(scrollY);
         
-        // Update touch start position for continuous tracking
-        touchStartY = touchY;
+        // Update last touch position for continuous tracking
+        lastTouchY = touchY;
       }
     };
     
     const handleTouchEnd = (e) => {
+      if (!touchMoved) return;
+      
       const touchEndTime = Date.now();
       const swipeDuration = touchEndTime - touchStartTime;
+      const totalSwipeDistance = touchStartY - lastTouchY;
       
-      // Add momentum for quick swipes
-      if (swipeDuration < 300 && Math.abs(scrollY - touchStartY) > 50) {
-        const momentum = (scrollY - touchStartY) * 0.1;
+      // Add momentum for natural feel
+      if (swipeDuration < 500 && Math.abs(totalSwipeDistance) > 30) {
+        // Calculate momentum based on swipe speed and distance
+        const swipeSpeed = Math.abs(totalSwipeDistance) / swipeDuration;
+        const momentum = totalSwipeDistance * swipeSpeed * 0.8;
+        
         scrollY += momentum;
         scrollY = Math.max(0, Math.min(scrollY, maxScroll));
         updateProgress(scrollY);
@@ -263,7 +276,16 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
     
     // Common function to update progress and animations
     const updateProgress = (currentScrollY) => {
-      const progress = currentScrollY / maxScroll;
+      // Mobile-optimized progress calculation
+      const isMobile = window.innerWidth <= 768;
+      let progress = currentScrollY / maxScroll;
+      
+      // On mobile, make the progress feel more natural
+      if (isMobile) {
+        // Apply easing curve for better mobile experience
+        progress = Math.pow(progress, 0.8); // Makes early progress faster
+      }
+      
       params.scrollProgress = progress;
       
       // Update animations based on scroll
@@ -385,6 +407,17 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
                       <div style={{ marginTop: '20px', fontSize: '14px', opacity: 0.8, color: '#666' }}>
             {window.innerWidth <= 768 ? 'Swipe up to continue' : 'Use mouse wheel or trackpad to scroll'}
           </div>
+          {window.innerWidth <= 768 && (
+            <div style={{ 
+              marginTop: '10px', 
+              fontSize: '12px', 
+              opacity: 0.6, 
+              color: '#999',
+              textAlign: 'center'
+            }}>
+              One good swipe should do it! ✨
+            </div>
+          )}
           </div>
         </div>
         
@@ -416,6 +449,28 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
           </div>
         )}
         
+        {/* Mobile Swipe Progress Indicator */}
+        {window.innerWidth <= 768 && (
+          <div 
+            className="mobile-progress"
+            style={{
+              position: 'fixed',
+              bottom: '40px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: 'rgba(255, 255, 255, 0.9)',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              fontSize: '12px',
+              color: '#666',
+              zIndex: 1002,
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}
+          >
+            {Math.round(params.scrollProgress * 100)}% Complete
+          </div>
+        )}
         
       </div>
       
