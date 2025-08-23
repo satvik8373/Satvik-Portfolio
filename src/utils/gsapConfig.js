@@ -3,8 +3,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 // ScrollSmoother requires ScrollTrigger
 import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, ScrollToPlugin);
 
 // Global GSAP defaults
 gsap.defaults({
@@ -20,13 +21,12 @@ ScrollTrigger.defaults({
   toggleActions: "play none none reverse"
 });
 
-
-
 // Export configured GSAP instance
 export { gsap };
 export {
   ScrollTrigger,
-  ScrollSmoother
+  ScrollSmoother,
+  ScrollToPlugin
 };
 
 // Export a default GSAP instance with all plugins

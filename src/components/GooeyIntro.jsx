@@ -1,17 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from '../utils/gsapConfig';
-import { ScrollTrigger } from '../utils/gsapConfig';
+import { ScrollTrigger, ScrollSmoother, ScrollToPlugin } from '../utils/gsapConfig';
 import './GooeyIntro.css';
 
 const GooeyIntro = ({ onIntroComplete, children }) => {
   const canvasRef = useRef(null);
-  const contentRef = useRef(null);
+  const websiteContentRef = useRef(null);
+  const introOverlayRef = useRef(null);
   const scrollMsgRef = useRef(null);
   const scrollArrowRef = useRef(null);
   const pageRef = useRef(null);
   const [introComplete, setIntroComplete] = useState(false);
   const [webglReady, setWebglReady] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [scrollSmoother, setScrollSmoother] = useState(null);
   
   const devicePixelRatio = Math.min(window.devicePixelRatio, 2);
   const params = {
@@ -295,60 +297,73 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       if (progress > 0.5 && scrollMsgRef.current) {
         gsap.to(scrollMsgRef.current, { opacity: 0, duration: 0.3 });
       }
-      if (progress > 0.7 && contentRef.current) {
-        gsap.to(contentRef.current, { opacity: 1, duration: 0.3 });
+      if (progress > 0.7 && websiteContentRef.current) {
+        gsap.to(websiteContentRef.current, { opacity: 1, duration: 0.3 });
       }
       
       // Start smooth transition to website content
       if (progress > 0.8 && !isTransitioning) {
         setIsTransitioning(true);
         const fadeProgress = (progress - 0.8) / 0.2;
-        gsap.to('.intro-overlay', { 
-          opacity: 1 - fadeProgress, 
-          duration: 0.1,
-          ease: "power2.out"
-        });
+        if (introOverlayRef.current) {
+          gsap.to(introOverlayRef.current, { 
+            opacity: 1 - fadeProgress, 
+            duration: 0.1,
+            ease: "power2.out"
+          });
+        }
         
         // Start revealing website content
-        gsap.to('.website-content', { 
-          opacity: fadeProgress, 
-          duration: 0.1,
-          ease: "power2.out"
-        });
+        if (websiteContentRef.current) {
+          gsap.to(websiteContentRef.current, { 
+            opacity: fadeProgress, 
+            duration: 0.1,
+            ease: "power2.out"
+          });
+        }
       }
       
       // Complete intro when scroll reaches end
       if (progress >= 1) {
         // Smooth transition to website
-        gsap.to('.intro-overlay', { 
-          opacity: 0, 
-          duration: 0.6,
-          ease: "power2.out",
-          onComplete: () => {
-            // Enable website content interaction
-            gsap.set('.website-content', { 
-              opacity: 1, 
-              pointerEvents: 'auto' 
-            });
-            
-            // Smooth scroll to top of website content
-            gsap.to(window, {
-              scrollTo: { y: 0 },
-              duration: 1.2,
-              ease: "power2.out"
-            });
-            
-            document.body.classList.remove("lock-scroll");
-            setIntroComplete(true);
-            if (onIntroComplete) {
-              onIntroComplete();
+        if (introOverlayRef.current) {
+          gsap.to(introOverlayRef.current, { 
+            opacity: 0, 
+            duration: 0.6,
+            ease: "power2.out",
+            onComplete: () => {
+              // Enable website content interaction
+              gsap.set(websiteContentRef.current, { 
+                opacity: 1, 
+                pointerEvents: 'auto' 
+              });
+              
+              // Initialize ScrollSmoother for the website content
+              if (websiteContentRef.current && !scrollSmoother) {
+                const smoother = ScrollSmoother.create({
+                  wrapper: websiteContentRef.current,
+                  content: websiteContentRef.current,
+                  smooth: 1.5,
+                  effects: true
+                });
+                setScrollSmoother(smoother);
+                
+                // Smooth scroll to top of website content
+                smoother.scrollTo(0, { duration: 1.2, ease: "power2.out" });
+              }
+              
+              document.body.classList.remove("lock-scroll");
+              setIntroComplete(true);
+              if (onIntroComplete) {
+                onIntroComplete();
+              }
+              window.removeEventListener("wheel", handleScroll);
+              document.removeEventListener("touchstart", handleTouchStart);
+              document.removeEventListener("touchmove", handleTouchMove);
+              document.removeEventListener("touchend", handleTouchEnd);
             }
-            window.removeEventListener("wheel", handleScroll);
-            document.removeEventListener("touchstart", handleTouchStart);
-            document.removeEventListener("touchmove", handleTouchMove);
-            document.removeEventListener("touchend", handleTouchEnd);
-          }
-        });
+          });
+        }
       }
     };
 
@@ -374,17 +389,18 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      
+      // Cleanup ScrollSmoother
+      if (scrollSmoother) {
+        scrollSmoother.kill();
+      }
     };
-  }, [onIntroComplete, introComplete]);
-
-  if (introComplete) {
-    return children;
-  }
+  }, [onIntroComplete, introComplete, scrollSmoother]);
 
   return (
     <div id="intro">
       {/* Intro overlay that fades out smoothly */}
-      <div className="intro-overlay" style={{
+      <div className="intro-overlay" ref={introOverlayRef} style={{
         position: 'fixed',
         top: 0,
         left: 0,
@@ -395,7 +411,8 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        opacity: 1
+        opacity: introComplete ? 0 : 1,
+        pointerEvents: introComplete ? 'none' : 'auto'
       }}>
         <div className="page" ref={pageRef}>
           <div className="scroll-msg" ref={scrollMsgRef}>
@@ -407,17 +424,7 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
                       <div style={{ marginTop: '20px', fontSize: '14px', opacity: 0.8, color: '#666' }}>
             {window.innerWidth <= 768 ? 'Swipe up to continue' : 'Use mouse wheel or trackpad to scroll'}
           </div>
-          {window.innerWidth <= 768 && (
-            <div style={{ 
-              marginTop: '10px', 
-              fontSize: '12px', 
-              opacity: 0.6, 
-              color: '#999',
-              textAlign: 'center'
-            }}>
-              One good swipe should do it! ✨
-            </div>
-          )}
+
           </div>
         </div>
         
@@ -454,11 +461,11 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       </div>
       
       {/* Website content that will be revealed */}
-      <div className="website-content" style={{
+      <div className="website-content" ref={websiteContentRef} style={{
         position: 'relative',
         zIndex: 1,
-        opacity: 0,
-        pointerEvents: 'none'
+        opacity: introComplete ? 1 : 0,
+        pointerEvents: introComplete ? 'auto' : 'none'
       }}>
         {children}
       </div>
