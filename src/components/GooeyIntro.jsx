@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from '../utils/gsapConfig';
-import { ScrollTrigger, ScrollToPlugin, ScrollSmoother } from '../utils/gsapConfig';
+import { ScrollTrigger, ScrollToPlugin } from '../utils/gsapConfig';
 import './GooeyIntro.css';
 
 const GooeyIntro = ({ onIntroComplete, children }) => {
@@ -12,7 +12,6 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
   const [introComplete, setIntroComplete] = useState(false);
   const [webglReady, setWebglReady] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const smootherRef = useRef(null);
   
   const devicePixelRatio = Math.min(window.devicePixelRatio, 2);
   const params = {
@@ -358,16 +357,6 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       gsap.set(pageRef.current, { opacity: 1 });
     }
 
-    // Initialize ScrollSmoother for smooth scrolling
-    if (ScrollSmoother) {
-      smootherRef.current = ScrollSmoother.create({
-        smooth: 1.5,
-        effects: true,
-        normalizeScroll: true,
-        ignoreMobileResize: true
-      });
-    }
-
     // Set up event listeners
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("wheel", handleScroll, { passive: false });
@@ -385,11 +374,6 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("touchend", handleTouchEnd);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      
-      // Clean up ScrollSmoother
-      if (smootherRef.current) {
-        smootherRef.current.kill();
-      }
     };
   }, [onIntroComplete, introComplete]);
 

@@ -1,13 +1,10 @@
 import { gsap } from "gsap";
     
-import { Draggable } from "gsap/Draggable";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 // ScrollSmoother requires ScrollTrigger
 import { ScrollSmoother } from "gsap/ScrollSmoother";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import { SplitText } from "gsap/SplitText";
 
-gsap.registerPlugin(Draggable, ScrollTrigger, ScrollSmoother, ScrollToPlugin, SplitText);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 // Global GSAP defaults
 gsap.defaults({
@@ -23,22 +20,13 @@ ScrollTrigger.defaults({
   toggleActions: "play none none reverse"
 });
 
-// ScrollSmoother setup (optional - can be configured per instance)
-// export const createScrollSmoother = (smooth = 1) => {
-//   return ScrollSmoother.create({
-//     smooth: smooth,
-//     effects: true
-//   });
-// };
+
 
 // Export configured GSAP instance
 export { gsap };
 export {
-  Draggable,
   ScrollTrigger,
-  ScrollSmoother,
-  ScrollToPlugin,
-  SplitText
+  ScrollSmoother
 };
 
 // Export a default GSAP instance with all plugins
