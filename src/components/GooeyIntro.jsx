@@ -214,8 +214,19 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
     const handleScroll = (e) => {
       if (introComplete) return;
       
-      // Calculate scroll progress
-      scrollY += e.deltaY * 0.5; // Reduce scroll sensitivity
+      // Calculate scroll progress with force detection
+      const scrollForce = Math.abs(e.deltaY);
+      let sensitivity = 0.5;
+      
+      // Detect force swipe - if scrolling fast, increase sensitivity
+      if (scrollForce > 50) {
+        sensitivity = 1.2; // Force swipe gets higher sensitivity
+        triggerHaptic('medium'); // Haptic feedback for force scroll
+      } else if (scrollForce > 25) {
+        sensitivity = 0.8; // Medium force
+      }
+      
+      scrollY += e.deltaY * sensitivity;
       scrollY = Math.max(0, Math.min(scrollY, maxScroll));
       
       updateProgress(scrollY);
@@ -276,7 +287,17 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
         touchMoved = true;
         
         // Much more sensitive for mobile - one good swipe should complete most of the animation
-        scrollY += deltaY * 1.2; // Increased sensitivity
+        let touchSensitivity = 1.2;
+        
+        // Detect force swipe on mobile
+        if (Math.abs(deltaY) > 30) {
+          touchSensitivity = 2.0; // Force swipe gets much higher sensitivity
+          triggerHaptic('medium'); // Haptic feedback for force swipe
+        } else if (Math.abs(deltaY) > 15) {
+          touchSensitivity = 1.5; // Medium force
+        }
+        
+        scrollY += deltaY * touchSensitivity;
         scrollY = Math.max(0, Math.min(scrollY, maxScroll));
         
         updateProgress(scrollY);
@@ -293,25 +314,25 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       const swipeDuration = touchEndTime - touchStartTime;
       const totalSwipeDistance = touchStartY - lastTouchY;
       
-      // Add momentum for natural feel
-      if (swipeDuration < 500 && Math.abs(totalSwipeDistance) > 30) {
-        // Calculate momentum based on swipe speed and distance
-        const swipeSpeed = Math.abs(totalSwipeDistance) / swipeDuration;
-        const momentum = totalSwipeDistance * swipeSpeed * 0.8;
-        
-        scrollY += momentum;
-        scrollY = Math.max(0, Math.min(scrollY, maxScroll));
-        updateProgress(scrollY);
-        
-        // Haptic feedback based on swipe intensity
-        if (Math.abs(totalSwipeDistance) > 100) {
-          triggerHaptic('heavy');
-        } else if (Math.abs(totalSwipeDistance) > 50) {
-          triggerHaptic('medium');
-        } else {
-          triggerHaptic('light');
+              // Add momentum for natural feel
+        if (swipeDuration < 500 && Math.abs(totalSwipeDistance) > 30) {
+          // Calculate momentum based on swipe speed and distance
+          const swipeSpeed = Math.abs(totalSwipeDistance) / swipeDuration;
+          const momentum = totalSwipeDistance * swipeSpeed * 0.8;
+          
+          scrollY += momentum;
+          scrollY = Math.max(0, Math.min(scrollY, maxScroll));
+          updateProgress(scrollY);
+          
+          // Haptic feedback based on swipe intensity
+          if (Math.abs(totalSwipeDistance) > 100) {
+            triggerHaptic('heavy');
+          } else if (Math.abs(totalSwipeDistance) > 50) {
+            triggerHaptic('medium');
+          } else {
+            triggerHaptic('light');
+          }
         }
-      }
     };
     
     // Common function to update progress and animations
@@ -320,29 +341,29 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       const isMobile = window.innerWidth <= 768;
       let progress = currentScrollY / maxScroll;
       
-      // On mobile, make the progress feel more natural
-      if (isMobile) {
-        // Apply easing curve for better mobile experience
-        progress = Math.pow(progress, 0.8); // Makes early progress faster
-        
-        // Haptic feedback at progress milestones
-        const oldProgress = params.scrollProgress;
-        const newProgress = progress;
-        
-        // Trigger haptic at 25%, 50%, 75% milestones
-        if (oldProgress < 0.25 && newProgress >= 0.25) {
-          triggerHaptic('medium');
-        } else if (oldProgress < 0.5 && newProgress >= 0.5) {
-          triggerHaptic('medium');
-        } else if (oldProgress < 0.75 && newProgress >= 0.75) {
-          triggerHaptic('medium');
+              // On mobile, make the progress feel more natural
+        if (isMobile) {
+          // Apply easing curve for better mobile experience
+          progress = Math.pow(progress, 0.8); // Makes early progress faster
+          
+          // Haptic feedback at progress milestones
+          const oldProgress = params.scrollProgress;
+          const newProgress = progress;
+          
+          // Trigger haptic at 25%, 50%, 75% milestones
+          if (oldProgress < 0.25 && newProgress >= 0.25) {
+            triggerHaptic('medium');
+          } else if (oldProgress < 0.5 && newProgress >= 0.5) {
+            triggerHaptic('medium');
+          } else if (oldProgress < 0.75 && newProgress >= 0.75) {
+            triggerHaptic('medium');
+          }
+          
+          // Heavy haptic when completing
+          if (oldProgress < 0.95 && newProgress >= 0.95) {
+            triggerHaptic('heavy');
+          }
         }
-        
-        // Heavy haptic when completing
-        if (oldProgress < 0.95 && newProgress >= 0.95) {
-          triggerHaptic('heavy');
-        }
-      }
       
       params.scrollProgress = progress;
       
@@ -507,7 +528,7 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
           </div>
         )}
         
-        {/* Mobile Round Scroller Indicator */}
+        {/* Mobile Swipe Progress Indicator */}
         {window.innerWidth <= 768 && (
           <div 
             className="mobile-scroller"
