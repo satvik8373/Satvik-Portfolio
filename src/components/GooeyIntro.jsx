@@ -227,11 +227,42 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
     let lastTouchY = 0;
     let touchMoved = false;
     
+    // Haptic feedback function
+    const triggerHaptic = (type = 'light') => {
+      if ('vibrate' in navigator) {
+        switch (type) {
+          case 'light':
+            navigator.vibrate(10);
+            break;
+          case 'medium':
+            navigator.vibrate(20);
+            break;
+          case 'heavy':
+            navigator.vibrate(30);
+            break;
+          default:
+            navigator.vibrate(10);
+        }
+      }
+      
+      // Visual haptic feedback on scroller
+      const scrollerOuter = document.querySelector('.scroller-outer');
+      if (scrollerOuter) {
+        scrollerOuter.classList.add('haptic');
+        setTimeout(() => {
+          scrollerOuter.classList.remove('haptic');
+        }, 200);
+      }
+    };
+    
     const handleTouchStart = (e) => {
       touchStartY = e.touches[0].clientY;
       lastTouchY = touchStartY;
       touchStartTime = Date.now();
       touchMoved = false;
+      
+      // Light haptic feedback on touch start
+      triggerHaptic('light');
     };
     
     const handleTouchMove = (e) => {
@@ -271,6 +302,15 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
         scrollY += momentum;
         scrollY = Math.max(0, Math.min(scrollY, maxScroll));
         updateProgress(scrollY);
+        
+        // Haptic feedback based on swipe intensity
+        if (Math.abs(totalSwipeDistance) > 100) {
+          triggerHaptic('heavy');
+        } else if (Math.abs(totalSwipeDistance) > 50) {
+          triggerHaptic('medium');
+        } else {
+          triggerHaptic('light');
+        }
       }
     };
     
@@ -284,6 +324,24 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       if (isMobile) {
         // Apply easing curve for better mobile experience
         progress = Math.pow(progress, 0.8); // Makes early progress faster
+        
+        // Haptic feedback at progress milestones
+        const oldProgress = params.scrollProgress;
+        const newProgress = progress;
+        
+        // Trigger haptic at 25%, 50%, 75% milestones
+        if (oldProgress < 0.25 && newProgress >= 0.25) {
+          triggerHaptic('medium');
+        } else if (oldProgress < 0.5 && newProgress >= 0.5) {
+          triggerHaptic('medium');
+        } else if (oldProgress < 0.75 && newProgress >= 0.75) {
+          triggerHaptic('medium');
+        }
+        
+        // Heavy haptic when completing
+        if (oldProgress < 0.95 && newProgress >= 0.95) {
+          triggerHaptic('heavy');
+        }
       }
       
       params.scrollProgress = progress;
@@ -449,26 +507,75 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
           </div>
         )}
         
-        {/* Mobile Swipe Progress Indicator */}
+        {/* Mobile Round Scroller Indicator */}
         {window.innerWidth <= 768 && (
           <div 
-            className="mobile-progress"
+            className="mobile-scroller"
             style={{
               position: 'fixed',
               bottom: '40px',
               left: '50%',
               transform: 'translateX(-50%)',
-              background: 'rgba(255, 255, 255, 0.9)',
-              padding: '8px 16px',
-              borderRadius: '20px',
-              fontSize: '12px',
-              color: '#666',
-              zIndex: 1002,
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
+              zIndex: 1002
             }}
           >
-            {Math.round(params.scrollProgress * 100)}% Complete
+            {/* Outer circle */}
+            <div 
+              className="scroller-outer"
+              style={{
+                width: '60px',
+                height: '60px',
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backdropFilter: 'blur(10px)'
+              }}
+            >
+              {/* Inner progress circle */}
+              <div 
+                className="scroller-inner"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  background: `conic-gradient(from 0deg, rgba(255, 110, 94, 0.8) 0deg, rgba(255, 110, 94, 0.8) ${params.scrollProgress * 360}deg, rgba(255, 255, 255, 0.2) ${params.scrollProgress * 360}deg)`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.1s ease'
+                }}
+              >
+                {/* Center icon */}
+                <div 
+                  className="scroller-icon"
+                  style={{
+                    fontSize: '16px',
+                    color: '#333',
+                    transform: `rotate(${params.scrollProgress * 360}deg)`,
+                    transition: 'transform 0.1s ease'
+                  }}
+                >
+                  ↑
+                </div>
+              </div>
+            </div>
+            
+            {/* Swipe hint text */}
+            <div 
+              className="scroller-hint"
+              style={{
+                marginTop: '8px',
+                fontSize: '10px',
+                color: 'rgba(255, 255, 255, 0.7)',
+                textAlign: 'center',
+                textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+              }}
+            >
+              Swipe up
+            </div>
           </div>
         )}
         

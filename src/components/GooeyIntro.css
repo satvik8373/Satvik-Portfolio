@@ -166,9 +166,38 @@ header.main-header {
     touch-action: manipulation;
   }
   
-  /* Mobile swipe progress indicator */
-  .mobile-progress {
+  /* Mobile round scroller indicator */
+  .mobile-scroller {
     animation: fadeInUp 0.5s ease-out;
+  }
+  
+  .scroller-outer {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .scroller-outer:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .scroller-inner {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .scroller-icon {
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .scroller-hint {
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+  
+  .scroller-hint:hover {
+    opacity: 1;
   }
   
   @keyframes fadeInUp {
@@ -185,5 +214,16 @@ header.main-header {
   /* Better touch feedback */
   .intro-overlay:active {
     cursor: grabbing;
+  }
+  
+  /* Haptic feedback visual indicator */
+  .scroller-outer.haptic {
+    animation: hapticPulse 0.2s ease-out;
+  }
+  
+  @keyframes hapticPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
   }
 }
