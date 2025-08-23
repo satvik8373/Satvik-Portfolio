@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from '../utils/gsapConfig';
-import { ScrollTrigger, ScrollToPlugin } from '../utils/gsapConfig';
+import { ScrollTrigger } from '../utils/gsapConfig';
 import './GooeyIntro.css';
 
 const GooeyIntro = ({ onIntroComplete, children }) => {
