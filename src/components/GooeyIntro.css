@@ -147,4 +147,22 @@ header.main-header {
   #portfolio {
     padding: 2rem;
   }
+  
+  /* Mobile touch improvements */
+  .intro-overlay {
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .scroll-msg {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  
+  /* Prevent zoom on double tap */
+  * {
+    touch-action: manipulation;
+  }
 }

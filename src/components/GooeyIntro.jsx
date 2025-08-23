@@ -218,10 +218,55 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
       scrollY += e.deltaY * 0.5; // Reduce scroll sensitivity
       scrollY = Math.max(0, Math.min(scrollY, maxScroll));
       
-      const progress = scrollY / maxScroll;
+      updateProgress(scrollY);
+    };
+
+    // Touch/swipe handler for mobile
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+    };
+    
+    const handleTouchMove = (e) => {
+      if (introComplete) return;
+      
+      const touchY = e.touches[0].clientY;
+      const deltaY = touchStartY - touchY; // Positive = swipe up
+      
+      // Only respond to vertical swipes
+      if (Math.abs(deltaY) > 10) {
+        scrollY += deltaY * 0.3; // Adjust sensitivity for touch
+        scrollY = Math.max(0, Math.min(scrollY, maxScroll));
+        
+        updateProgress(scrollY);
+        
+        // Update touch start position for continuous tracking
+        touchStartY = touchY;
+      }
+    };
+    
+    const handleTouchEnd = (e) => {
+      const touchEndTime = Date.now();
+      const swipeDuration = touchEndTime - touchStartTime;
+      
+      // Add momentum for quick swipes
+      if (swipeDuration < 300 && Math.abs(scrollY - touchStartY) > 50) {
+        const momentum = (scrollY - touchStartY) * 0.1;
+        scrollY += momentum;
+        scrollY = Math.max(0, Math.min(scrollY, maxScroll));
+        updateProgress(scrollY);
+      }
+    };
+    
+    // Common function to update progress and animations
+    const updateProgress = (currentScrollY) => {
+      const progress = currentScrollY / maxScroll;
       params.scrollProgress = progress;
       
-      // Update animations based on scroll (with null checks)
+      // Update animations based on scroll
       if (progress > 0.3 && scrollArrowRef.current) {
         gsap.to(scrollArrowRef.current, { y: 50, opacity: 0, duration: 0.2 });
       }
@@ -277,6 +322,9 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
               onIntroComplete();
             }
             window.removeEventListener("wheel", handleScroll);
+            document.removeEventListener("touchstart", handleTouchStart);
+            document.removeEventListener("touchmove", handleTouchMove);
+            document.removeEventListener("touchend", handleTouchEnd);
           }
         });
       }
@@ -291,10 +339,18 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("wheel", handleScroll, { passive: false });
     
+    // Add touch events for mobile
+    document.addEventListener("touchstart", handleTouchStart, { passive: false });
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd, { passive: false });
+    
     // Cleanup
     return () => {
       window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("wheel", handleScroll);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, [onIntroComplete, introComplete]);
@@ -326,9 +382,9 @@ const GooeyIntro = ({ onIntroComplete, children }) => {
             <div className="arrow-animated-wrapper" ref={scrollArrowRef}>
               <div className="arrow-animated" style={{ color: '#333' }}>&darr;</div>
             </div>
-            <div style={{ marginTop: '20px', fontSize: '14px', opacity: 0.8, color: '#666' }}>
-              Use mouse wheel or trackpad to scroll
-            </div>
+                      <div style={{ marginTop: '20px', fontSize: '14px', opacity: 0.8, color: '#666' }}>
+            {window.innerWidth <= 768 ? 'Swipe up to continue' : 'Use mouse wheel or trackpad to scroll'}
+          </div>
           </div>
         </div>
         
