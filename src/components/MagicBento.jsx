@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback, useState } from "react";
-import { gsap } from "../utils/gsapConfig";
+import { gsap } from "gsap";
 import { useTheme } from '../context/ThemeContext';
 import "./MagicBento.css";
 
