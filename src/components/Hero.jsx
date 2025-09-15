@@ -1,49 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 import { Download, Mail } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
-import LiquidEther from './LiquidEther'
+import Shuffle from './Shuffle'
 
 const Hero = () => {
   const { isDarkMode } = useTheme()
-  const [isHovered, setIsHovered] = useState(false)
   
   return (
-    <section 
-      id="home" 
-      className="min-h-screen flex items-center justify-center pt-24 px-6 relative overflow-hidden bg-black"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* LiquidEther Hover Effect */}
-      <motion.div 
-        className="absolute inset-0 z-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isHovered ? 1 : 0 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-      >
-        {isHovered && (
-          <LiquidEther
-            colors={['#5227FF', '#FF9FFC', '#B19EEF']}
-            mouseForce={20}
-            cursorSize={100}
-            isViscous={false}
-            viscous={30}
-            iterationsViscous={32}
-            iterationsPoisson={32}
-            resolution={0.5}
-            isBounce={false}
-            autoDemo={false}
-            autoSpeed={0.5}
-            autoIntensity={2.2}
-            takeoverDuration={0.25}
-            autoResumeDelay={3000}
-            autoRampDuration={0.6}
-            style={{ width: '100%', height: '100%' }}
-            className="opacity-40"
-          />
-        )}
-      </motion.div>
+    <section id="home" className="min-h-screen flex items-center justify-center pt-24 px-6 relative overflow-hidden">
+      {/* Background placeholder (Ballpit removed) */}
+      <div className="absolute inset-0 z-0" />
       
       <div className="max-w-7xl mx-auto text-center relative z-10">
         {/* Avatar */}
@@ -56,7 +23,7 @@ const Hero = () => {
           <div className="w-56 h-56 mx-auto rounded-full bg-avatar-gradient p-1.5 shadow-lg shadow-purple-500/20">
             <div className="w-full h-full rounded-full bg-gray-300 overflow-hidden">
               <img
-                src=".\images\satvik.jpg"
+                src="/images/satvik.jpg"
                 alt="Satvik Patel"
                 className="w-full h-full object-cover"
               />
@@ -70,12 +37,26 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <h1 className="text-4xl md:text-6xl font-poppins font-extrabold mb-8 leading-tight tracking-tight">
-            <span className="bg-gradient-orange-purple bg-clip-text text-transparent inline-block">
-              Satvik Patel
+          <h1 className="text-4xl md:text-6xl font-poppins font-extrabold mb-4 leading-tight tracking-tight">
+            <span className="block">
+              <Shuffle
+                text="Satvik Patel"
+                shuffleDirection="right"
+                duration={0.35}
+                animationMode="evenodd"
+                shuffleTimes={1}
+                ease="power3.out"
+                stagger={0.03}
+                threshold={0.1}
+                triggerOnce={true}
+                triggerOnHover={true}
+                respectReducedMotion={true}
+                className="bg-gradient-orange-purple bg-clip-text text-transparent"
+                tag="span"
+                textAlign="center"
+              />
             </span>
-            <br />
-            <span className="bg-gradient-orange-purple bg-clip-text text-transparent inline-block">
+            <span className="bg-gradient-orange-purple bg-clip-text text-transparent inline-block mt-1 leading-tight">
               Full Stack Web Developer
             </span>
           </h1>

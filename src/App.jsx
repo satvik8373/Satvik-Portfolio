@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeContext'
 import Header from './components/Header'
@@ -9,9 +9,9 @@ import Projects from './components/Projects'
 import Experience from './components/Experience'
 import Footer from './components/Footer'
 import ProjectDetail from './components/ProjectDetail'
-import ThemeDebugPanel from './components/ThemeDebugPanel'
 import AnimatedBackground from './AnimatedBackground'
 import TrueFocus from './components/TrueFocus'
+import FlowingMenu from './components/FlowingMenu'
 
 function App() {
   return (
@@ -28,6 +28,19 @@ function App() {
 
                 <Header />
                 <Hero />
+                {/* Flowing skills/traits menu */}
+                <div className="container mx-auto px-4 py-8">
+                  <div style={{ height: '420px', position: 'relative' }}>
+                    <FlowingMenu
+                      items={[
+                        { link: '#skills', text: 'Problem Solving', image: 'https://picsum.photos/600/400?random=11' },
+                        { link: '#skills', text: 'System Design', image: 'https://picsum.photos/600/400?random=12' },
+                        { link: '#skills', text: 'Performance', image: 'https://picsum.photos/600/400?random=13' },
+                        { link: '#skills', text: 'Animations', image: 'https://picsum.photos/600/400?random=14' }
+                      ]}
+                    />
+                  </div>
+                </div>
                 <div className="container mx-auto px-4 py-8">
                   <TrueFocus
                     sentence="True Focus"
@@ -43,9 +56,6 @@ function App() {
                 <Projects />
                 <Experience />
                 <Footer />
-
-                {/* Theme Debug Panel - only in development */}
-                {process.env.NODE_ENV === 'development' && <ThemeDebugPanel />}
               </div>
             }
           />
