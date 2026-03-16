@@ -17,6 +17,7 @@
     "framer-motion": "^10.18.0",
     "gsap": "^3.13.0",
     "lucide-react": "^0.294.0",
+    "nano-banana": "^0.0.0",
     "ogl": "^1.0.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

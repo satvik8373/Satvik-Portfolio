@@ -3082,6 +3082,11 @@ mz@^2.7.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
+nano-banana@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.npmjs.org/nano-banana/-/nano-banana-0.0.0.tgz"
+  integrity sha512-GCPR1ApPeIb9+1pu2qk1Rlb8XPzcNb1m4NXolIvW4sTlD1j2E0flkXSoyy3h6z8sxB3GnYaz7SWAzXTCgiCU2w==
+
 nanoid@^3.3.11:
   version "3.3.11"
   resolved "https://registry.npmjs.org/nanoid/-/nanoid-3.3.11.tgz"

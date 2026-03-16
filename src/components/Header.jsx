@@ -8,11 +8,20 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showHeader, setShowHeader] = useState(false)
   const { isDarkMode } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+      const scrollPosition = window.scrollY
+      const windowHeight = window.innerHeight
+      
+      // Show header after scrolling past 80% of the scrollytelling section (400vh)
+      const scrollytellingHeight = windowHeight * 5 // 500vh
+      const showThreshold = scrollytellingHeight * 0.8 // 80% of scrollytelling section
+      
+      setShowHeader(scrollPosition > showThreshold)
+      setIsScrolled(scrollPosition > 50)
       
       // Determine active section based on scroll position
       const sections = ['home', 'projects', 'experience', 'contact']
@@ -55,17 +64,20 @@ const Header = () => {
     <>
       <motion.header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 flex justify-center`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ 
+          y: showHeader ? 0 : -100,
+          opacity: showHeader ? 1 : 0
+        }}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
         <div className={`${isScrolled ? 'max-w-3xl' : 'max-w-7xl'} w-full mx-auto px-4 ${isScrolled ? 'py-2' : 'py-4'} transition-all duration-500`}>
-          {/* Glassmorphism navbar */}
+          {/* Glassmorphism navbar with enhanced visibility */}
           <motion.div 
-            className={`backdrop-blur-md ${
+            className={`backdrop-blur-xl ${
               isScrolled 
-                ? 'glass-card shadow-lg' 
-                : 'bg-transparent'
+                ? 'glass-card shadow-lg bg-black/60' 
+                : 'bg-black/50 border border-white/10'
             } rounded-full px-4 sm:px-6 py-2 flex items-center justify-between theme-transition`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

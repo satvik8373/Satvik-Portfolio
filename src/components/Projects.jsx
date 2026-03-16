@@ -123,7 +123,7 @@ const Projects = () => {
   const secondRow = projects.slice(3);
 
   return (
-    <section id="projects" className="py-10 px-4">
+    <section id="projects" className="py-10 px-4 bg-primary theme-transition -mt-1">
       <div className="max-w-5xl mx-auto">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
