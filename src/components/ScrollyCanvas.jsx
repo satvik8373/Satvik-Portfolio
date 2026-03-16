@@ -6,6 +6,7 @@ const ScrollyCanvas = () => {
   const canvasRef = useRef(null)
   const [images, setImages] = useState([])
   const [imagesLoaded, setImagesLoaded] = useState(false)
+  const [loadProgress, setLoadProgress] = useState(0)
   const [isDarkTheme, setIsDarkTheme] = useState(true)
   const [gradientOpacity, setGradientOpacity] = useState(0)
   
@@ -55,19 +56,23 @@ const ScrollyCanvas = () => {
     const frameCount = 192
     const loadedImages = []
     let loadedCount = 0
+    const handleFrameReady = () => {
+      loadedCount++
+      const progress = Math.round((loadedCount / frameCount) * 100)
+      setLoadProgress(progress)
+      if (loadedCount === frameCount) {
+        setImagesLoaded(true)
+      }
+    }
 
-    const preloadImages = async () => {
+    const preloadImages = () => {
       for (let i = 0; i < frameCount; i++) {
         const img = new Image()
         const frameNumber = String(i).padStart(3, '0')
         img.src = `/ezgif-split/frame_${frameNumber}_delay-0.041s.webp`
         
-        img.onload = () => {
-          loadedCount++
-          if (loadedCount === frameCount) {
-            setImagesLoaded(true)
-          }
-        }
+        img.onload = handleFrameReady
+        img.onerror = handleFrameReady
         
         loadedImages.push(img)
       }
@@ -187,11 +192,11 @@ const ScrollyCanvas = () => {
           }}
         />
         
-        {/* Loading indicator - only shows text, not blocking the image */}
+        {/* Loading indicator - shows progress until all frames are ready */}
         {!imagesLoaded && (
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
             <div className="text-white/60 text-sm font-medium backdrop-blur-sm bg-black/30 px-4 py-2 rounded-full">
-              Loading experience...
+              Loading experience... {loadProgress}%
             </div>
           </div>
         )}
