@@ -6,7 +6,6 @@ const ScrollyCanvas = () => {
   const canvasRef = useRef(null)
   const [images, setImages] = useState([])
   const [imagesLoaded, setImagesLoaded] = useState(false)
-  const [loadProgress, setLoadProgress] = useState(0)
   const [isDarkTheme, setIsDarkTheme] = useState(true)
   const [gradientOpacity, setGradientOpacity] = useState(0)
   
@@ -40,7 +39,6 @@ const ScrollyCanvas = () => {
       if (progress < 0.85) {
         setGradientOpacity(0)
       } else if (progress >= 0.85 && progress < 0.95) {
-        // Fade in from 85% to 95%
         const fadeProgress = (progress - 0.85) / 0.1
         setGradientOpacity(fadeProgress)
       } else {
@@ -51,157 +49,158 @@ const ScrollyCanvas = () => {
     return () => unsubscribe()
   }, [scrollYProgress])
 
-  // Preload all images
+  // Preload images with priority loading
   useEffect(() => {
     const frameCount = 192
-    const loadedImages = []
+    const loadedImages = new Array(frameCount)
     let loadedCount = 0
-    const handleFrameReady = () => {
-      loadedCount++
-      const progress = Math.round((loadedCount / frameCount) * 100)
-      setLoadProgress(progress)
-      if (loadedCount === frameCount) {
-        setImagesLoaded(true)
-      }
-    }
 
     const preloadImages = () => {
-      for (let i = 0; i < frameCount; i++) {
+      // Load first frame immediately
+      const firstImg = new Image()
+      firstImg.src = `/ezgif-split/frame_000_delay-0.041s.webp`
+      firstImg.onload = () => {
+        loadedImages[0] = firstImg
+        setImages([...loadedImages])
+        setImagesLoaded(true) // Show canvas immediately with first frame
+      }
+      
+      // Load remaining frames in background
+      for (let i = 1; i < frameCount; i++) {
         const img = new Image()
         const frameNumber = String(i).padStart(3, '0')
         img.src = `/ezgif-split/frame_${frameNumber}_delay-0.041s.webp`
         
-        img.onload = handleFrameReady
-        img.onerror = handleFrameReady
-        
-        loadedImages.push(img)
+        img.onload = () => {
+          loadedCount++
+          loadedImages[i] = img
+          if (loadedCount % 10 === 0 || loadedCount === frameCount - 1) {
+            setImages([...loadedImages])
+          }
+        }
       }
-      setImages(loadedImages)
     }
 
     preloadImages()
   }, [])
 
-  // Render canvas based on scroll
+  // Optimized canvas rendering
   useEffect(() => {
     if (!imagesLoaded || images.length === 0) return
 
     const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d', { alpha: false })
+    if (!canvas) return
+    
+    const ctx = canvas.getContext('2d', { 
+      alpha: false,
+      desynchronized: true,
+      willReadFrequently: false
+    })
+
+    let animationFrameId = null
+    let lastFrameIndex = -1
+    let isResizing = false
 
     const render = () => {
       const scrollProgress = scrollYProgress.get()
       const frameIndex = Math.min(
-        Math.floor(scrollProgress * images.length),
+        Math.floor(scrollProgress * (images.length - 1)),
         images.length - 1
       )
+
+      // Skip if same frame and not resizing
+      if (frameIndex === lastFrameIndex && !isResizing) return
+      lastFrameIndex = frameIndex
 
       const img = images[frameIndex]
       if (!img || !img.complete) return
 
-      // Get device pixel ratio for high-DPI displays
-      const dpr = window.devicePixelRatio || 1
+      // Cap DPR at 2 for performance
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
       
-      // Set canvas size with device pixel ratio for sharp rendering
       const displayWidth = window.innerWidth
       const displayHeight = window.innerHeight
       
-      canvas.width = displayWidth * dpr
-      canvas.height = displayHeight * dpr
-      
-      // Scale context to match device pixel ratio
-      ctx.scale(dpr, dpr)
-      
-      // Set canvas display size (CSS pixels)
-      canvas.style.width = `${displayWidth}px`
-      canvas.style.height = `${displayHeight}px`
+      // Only resize if dimensions changed
+      if (canvas.width !== displayWidth * dpr || canvas.height !== displayHeight * dpr) {
+        canvas.width = displayWidth * dpr
+        canvas.height = displayHeight * dpr
+        canvas.style.width = `${displayWidth}px`
+        canvas.style.height = `${displayHeight}px`
+        ctx.scale(dpr, dpr)
+      }
 
-      // Enable image smoothing for better quality
       ctx.imageSmoothingEnabled = true
-      ctx.imageSmoothingQuality = 'high'
+      ctx.imageSmoothingQuality = 'medium'
 
-      // Calculate dimensions for object-fit: cover (fill entire viewport)
       const canvasAspect = displayWidth / displayHeight
       const imgAspect = img.width / img.height
 
       let drawWidth, drawHeight, offsetX, offsetY
 
       if (canvasAspect > imgAspect) {
-        // Canvas is wider - fit to width
         drawWidth = displayWidth
         drawHeight = displayWidth / imgAspect
         offsetX = 0
-        // Center vertically to avoid any top gap
         offsetY = (displayHeight - drawHeight) / 2
       } else {
-        // Canvas is taller - fit to height
         drawHeight = displayHeight
         drawWidth = displayHeight * imgAspect
         offsetX = (displayWidth - drawWidth) / 2
-        // No vertical offset when heights match
         offsetY = 0
       }
 
       ctx.clearRect(0, 0, displayWidth, displayHeight)
       ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight)
+      
+      isResizing = false
     }
 
-    const unsubscribe = scrollYProgress.on('change', render)
-    
-    // Render first frame immediately when images are loaded
-    setTimeout(render, 0)
+    // Use RAF for smooth rendering
+    const scheduleRender = () => {
+      if (animationFrameId) return
+      animationFrameId = requestAnimationFrame(() => {
+        render()
+        animationFrameId = null
+      })
+    }
 
-    // Handle resize with debounce for performance
+    const unsubscribe = scrollYProgress.on('change', scheduleRender)
+    
+    // Initial render
+    render()
+
+    // Optimized resize
     let resizeTimeout
     const handleResize = () => {
+      isResizing = true
       clearTimeout(resizeTimeout)
-      resizeTimeout = setTimeout(render, 100)
+      resizeTimeout = setTimeout(scheduleRender, 150)
     }
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', handleResize, { passive: true })
 
     return () => {
       unsubscribe()
       window.removeEventListener('resize', handleResize)
       clearTimeout(resizeTimeout)
+      if (animationFrameId) cancelAnimationFrame(animationFrameId)
     }
   }, [images, imagesLoaded, scrollYProgress])
 
   return (
     <div ref={containerRef} className="relative" style={{ height: '500vh' }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-primary theme-transition">
-        {/* High-quality first frame as background - shows immediately */}
-        {!imagesLoaded && (
-          <div 
-            className="absolute inset-0 w-full h-full bg-cover bg-center"
-            style={{ 
-              backgroundImage: 'url(/ezgif-split/frame_000_delay-0.041s.webp)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center 10%'
-            }}
-          />
-        )}
-        
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full"
           style={{ 
             objectFit: 'cover',
-            imageRendering: 'high-quality',
-            opacity: imagesLoaded ? 1 : 0,
-            transition: 'opacity 0.5s ease-in-out'
+            imageRendering: 'auto',
+            willChange: 'contents'
           }}
         />
         
-        {/* Loading indicator - shows progress until all frames are ready */}
-        {!imagesLoaded && (
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
-            <div className="text-white/60 text-sm font-medium backdrop-blur-sm bg-black/30 px-4 py-2 rounded-full">
-              Loading experience... {loadProgress}%
-            </div>
-          </div>
-        )}
-        
-        {/* Gradient overlay at bottom for seamless transition - only shows near end of scroll */}
+        {/* Gradient overlay - only shows near end */}
         <div 
           className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none z-20 transition-opacity duration-500" 
           style={{

@@ -4,6 +4,8 @@ import { ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const ProjectCard = ({ title, subtitle, tech, description, type, id, image, externalLink }) => {
+  const [imageLoaded, setImageLoaded] = React.useState(false)
+
   // Get CSS classes based on project type
   const getCardClasses = () => {
     switch(type) {
@@ -37,8 +39,14 @@ const ProjectCard = ({ title, subtitle, tech, description, type, id, image, exte
           <img 
             src={image} 
             alt={title} 
-            className="absolute inset-0 w-full h-full object-cover z-0"
+            className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            loading="lazy"
+            onLoad={() => setImageLoaded(true)}
           />
+          {/* Placeholder while loading */}
+          {!imageLoaded && (
+            <div className={`absolute inset-0 z-0 ${cardBgClass} opacity-30`}></div>
+          )}
           <div className={`absolute inset-0 z-10 opacity-70 ${cardBgClass}`}></div>
           
           {/* Title only (always visible) */}

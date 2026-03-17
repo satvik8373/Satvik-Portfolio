@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { gsap } from '../../gsap-public/esm/index.js'
 import { SplitText } from '../../gsap-public/esm/SplitText.js'
 
@@ -74,24 +74,22 @@ const Overlay = ({ containerRef }) => {
     }
   }, [])
 
-  // Section 1: 0% - Center
-  const section1Opacity = useTransform(scrollYProgress, [0, 0.15, 0.25], [1, 1, 0])
-  const section1Y = useTransform(scrollYProgress, [0, 0.25], [0, -100])
-
-  // Section 2: 30% - Left
-  const section2Opacity = useTransform(scrollYProgress, [0.25, 0.3, 0.5, 0.55], [0, 1, 1, 0])
-  const section2X = useTransform(scrollYProgress, [0.25, 0.3], [100, 0])
-
-  // Section 3: 60% - Right
-  const section3Opacity = useTransform(scrollYProgress, [0.55, 0.6, 0.75, 0.78], [0, 1, 1, 0])
-  const section3X = useTransform(scrollYProgress, [0.55, 0.6], [-100, 0])
+  // Memoize transforms for better performance
+  const transforms = useMemo(() => ({
+    section1Opacity: useTransform(scrollYProgress, [0, 0.15, 0.25], [1, 1, 0]),
+    section1Y: useTransform(scrollYProgress, [0, 0.25], [0, -100]),
+    section2Opacity: useTransform(scrollYProgress, [0.25, 0.3, 0.5, 0.55], [0, 1, 1, 0]),
+    section2X: useTransform(scrollYProgress, [0.25, 0.3], [100, 0]),
+    section3Opacity: useTransform(scrollYProgress, [0.55, 0.6, 0.75, 0.78], [0, 1, 1, 0]),
+    section3X: useTransform(scrollYProgress, [0.55, 0.6], [-100, 0])
+  }), [scrollYProgress])
 
   return (
     <div className="fixed inset-0 pointer-events-none z-10">
       {/* Section 1: Left-aligned with special typography */}
       <motion.div
-        style={{ opacity: section1Opacity, y: section1Y }}
-        className="absolute inset-0 flex items-center justify-start"
+        style={{ opacity: transforms.section1Opacity, y: transforms.section1Y }}
+        className="absolute inset-0 flex items-center justify-start will-change-transform"
       >
         <div className="ml-8 md:ml-20 lg:ml-32 px-4 max-w-4xl">
           <h1 
@@ -127,8 +125,8 @@ const Overlay = ({ containerRef }) => {
 
       {/* Section 2: Left */}
       <motion.div
-        style={{ opacity: section2Opacity, x: section2X }}
-        className="absolute inset-0 flex items-center"
+        style={{ opacity: transforms.section2Opacity, x: transforms.section2X }}
+        className="absolute inset-0 flex items-center will-change-transform"
       >
         <div className="ml-8 md:ml-16 max-w-2xl">
           <h2 className="text-5xl md:text-7xl font-bold text-white mb-4" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.9)' }}>
@@ -142,8 +140,8 @@ const Overlay = ({ containerRef }) => {
 
       {/* Section 3: Right */}
       <motion.div
-        style={{ opacity: section3Opacity, x: section3X }}
-        className="absolute inset-0 flex items-center justify-end"
+        style={{ opacity: transforms.section3Opacity, x: transforms.section3X }}
+        className="absolute inset-0 flex items-center justify-end will-change-transform"
       >
         <div className="mr-8 md:mr-16 max-w-2xl text-right">
           <h2 className="text-5xl md:text-7xl font-bold text-white mb-4" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.9)' }}>
