@@ -1,12 +1,12 @@
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion as m } from 'framer-motion'
 import { useTheme } from '../context/ThemeContext'
 
 const ExperienceItem = ({ title, period, description, logo, delay, isEducation }) => {
   const { isDarkMode } = useTheme()
   
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay }}
@@ -48,7 +48,7 @@ const ExperienceItem = ({ title, period, description, logo, delay, isEducation }
           background: `linear-gradient(to bottom, rgba(var(--color-accent-blue), 0.3), transparent)`
         }}
       ></div>
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -56,22 +56,34 @@ const Experience = () => {
   const { isDarkMode } = useTheme()
   const experiences = [
     {
-      title: 'Web Developer at Spread Me Digital',
-      period: 'Jan 2025 - Apr 2025',
-      description: "Created dynamic, user-friendly websites and full-stack applications using React.js, JavaScript, and backend technologies. Developed and integrated APIs, user authentication, and real-time features. Managed server-side logic using Node.js and PHP, connected to MySQL and MongoDB databases. Applied responsive UI/UX principles for consistent performance across all devices.",
+      title: 'React.js Trainee at TOPS Technologies',
+      period: 'Sep 2025 - Jan 2026',
+      description: "Completed a full-time React.js professional training program in Ahmedabad. Developed responsive web applications, reusable frontend components, and practical UI flows using modern React.js patterns.",
       logo: null
     },
     {
-      title: 'B.Sc. in Information Technology',
-      period: 'Completed',
-      description: "Ganpat University, Kherva, Mahesana",
+      title: 'Full Stack Developer Intern at InnoByte Services',
+      period: 'Sep 2025 - Oct 2025',
+      description: "Worked remotely on full-stack feature development using JavaScript frameworks and REST APIs. Improved application structure through debugging, optimization, and hands-on integration work.",
+      logo: null
+    },
+    {
+      title: 'Web Developer Intern at Spread Me Digital',
+      period: 'Jan 2025 - Apr 2025',
+      description: "Built responsive web interfaces in Gandhinagar and integrated backend APIs. Worked with MongoDB and MySQL databases while applying responsive UI/UX principles for consistent performance across devices.",
+      logo: null
+    },
+    {
+      title: "Master's in Information Technology",
+      period: 'Ongoing',
+      description: "Ganpat University, Kherva, Gujarat",
       logo: null,
       isEducation: true
     },
     {
-      title: "Master's Degree",
-      period: 'Currently Pursuing',
-      description: "Ganpat University, Kherva, Mahesana",
+      title: 'B.Sc. Information Technology',
+      period: 'Completed',
+      description: "Ganpat University, Kherva, Gujarat - CGPA: 7.0",
       logo: null,
       isEducation: true
     }
@@ -80,7 +92,7 @@ const Experience = () => {
   return (
     <section id="experience" className="py-28 px-6">
       <div className="max-w-7xl mx-auto">
-        <motion.h2
+        <m.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -88,12 +100,12 @@ const Experience = () => {
           className="text-5xl font-extrabold mb-20 text-center bg-gradient-blue bg-clip-text text-transparent inline-block mx-auto"
         >
           Experience & Education
-        </motion.h2>
+        </m.h2>
 
         <div className="max-w-4xl mx-auto">
           {experiences.map((exp, index) => (
             <ExperienceItem 
-              key={index}
+              key={`${exp.title}-${exp.period}`}
               title={exp.title}
               period={exp.period}
               description={exp.description}

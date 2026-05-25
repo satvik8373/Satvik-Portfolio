@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import React, { Suspense, lazy, useState, useEffect } from 'react'
+import { motion as m, AnimatePresence } from 'framer-motion'
 import { useTheme } from '../context/ThemeContext'
 import ThemeToggle from './ThemeToggle'
+
+const StaggeredMenu = lazy(() => import('./StaggeredMenu'))
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showHeader, setShowHeader] = useState(false)
   const { isDarkMode } = useTheme()
 
@@ -37,20 +37,13 @@ const Header = () => {
       }
     }
     
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   const scrollToSection = (sectionId) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
     setActiveSection(sectionId)
-    setMobileMenuOpen(false)
-  }
-
-
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen)
   }
 
   const navItems = [
@@ -62,8 +55,8 @@ const Header = () => {
 
   return (
     <>
-      <motion.header 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 flex justify-center`}
+      <m.header 
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 hidden md:flex justify-center`}
         initial={{ y: -100, opacity: 0 }}
         animate={{ 
           y: showHeader ? 0 : -100,
@@ -73,7 +66,7 @@ const Header = () => {
       >
         <div className={`${isScrolled ? 'max-w-3xl' : 'max-w-7xl'} w-full mx-auto px-4 ${isScrolled ? 'py-2' : 'py-4'} transition-all duration-500`}>
           {/* Glassmorphism navbar with enhanced visibility */}
-          <motion.div 
+          <m.div 
             className={`backdrop-blur-xl ${
               isScrolled 
                 ? 'glass-card shadow-lg bg-black/60' 
@@ -86,7 +79,7 @@ const Header = () => {
           >
             {/* Logo with Name */}
             <AnimatePresence>
-              <motion.div 
+              <m.div 
                 className="flex items-center"
                 animate={{ 
                   scale: isScrolled ? 0.8 : 1,
@@ -98,7 +91,7 @@ const Header = () => {
                   alt="MX Logo" 
                   className={`${isScrolled ? 'w-8 h-8' : 'w-10 h-10'} object-contain transition-all duration-300`} 
                 />
-                <motion.div 
+                <m.div 
                   className={`ml-2 font-jakarta font-bold text-primary theme-transition flex items-center ${
                     isScrolled ? 'text-sm' : 'text-base'
                   }`}
@@ -108,15 +101,16 @@ const Header = () => {
                 >
                   <span className="hidden sm:inline">Satvik Patel</span>
                   <span className="sm:hidden">Satvik</span>
-                </motion.div>
-              </motion.div>
+                </m.div>
+              </m.div>
             </AnimatePresence>
 
             {/* Navigation - Desktop */}
-            <nav className="hidden md:flex items-center space-x-4 lg:space-x-8">
+            <nav className="hidden md:flex items-center gap-x-4 lg:gap-x-8">
               {navItems.map((item) => (
                 <button
                   key={item.id}
+                  type="button"
                   onClick={() => scrollToSection(item.id)}
                   className={`font-jakarta font-semibold ${isScrolled ? 'text-sm' : 'text-base'} tracking-wider relative group ${
                     activeSection === item.id ? 'text-accent-blue' : 'text-primary hover-text-primary'
@@ -130,94 +124,46 @@ const Header = () => {
               ))}
             </nav>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-x-2">
               {/* Theme toggle */}
-              <motion.div
+              <m.div
                 animate={{ scale: isScrolled ? 0.9 : 1 }}
                 transition={{ duration: 0.3 }}
               >
                 <ThemeToggle size={isScrolled ? 'sm' : 'md'} />
-              </motion.div>
-
-              {/* Mobile menu button - now using Lucide icons */}
-              <motion.button 
-                className="md:hidden flex items-center justify-center text-primary focus-theme"
-                onClick={toggleMobileMenu}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-              >
-                <div className={`${
-                  isScrolled ? 'w-8 h-8' : 'w-10 h-10'
-                } rounded-full glass-card flex items-center justify-center hover-bg-secondary theme-transition`}>
-                  {mobileMenuOpen ? 
-                    <X size={isScrolled ? 16 : 18} /> : 
-                    <Menu size={isScrolled ? 16 : 18} />
-                  }
-                </div>
-              </motion.button>
+              </m.div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
-      </motion.header>
+      </m.header>
 
-      {/* Mobile menu overlay */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div 
-            className="fixed inset-0 z-40 backdrop-blur-md flex items-center justify-center theme-transition"
-            style={{ backgroundColor: 'rgba(var(--color-bg-primary), 0.9)' }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <motion.div className="text-center mb-8">
-              <motion.h2 
-                className="text-primary text-3xl font-bold mb-2"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.1 }}
-              >
-                Satvik Patel
-              </motion.h2>
-              <motion.p 
-                className="text-secondary text-sm"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                Full Stack Web Developer
-              </motion.p>
-            </motion.div>
-            
-            <motion.nav 
-              className="flex flex-col items-center space-y-8 py-8"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {navItems.map((item) => (
-                <motion.button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className={`font-jakarta font-semibold text-2xl tracking-wider relative group ${
-                    activeSection === item.id ? 'text-accent-blue' : 'text-primary'
-                  } theme-transition focus-theme`}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {item.name}
-                  <span className={`absolute -bottom-2 left-0 h-1 bg-gradient-orange-purple theme-transition ${
-                    activeSection === item.id ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}></span>
-                </motion.button>
-              ))}
-            </motion.nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {showHeader && (
+        <Suspense fallback={null}>
+          <StaggeredMenu
+            className="md:hidden"
+            isFixed
+            position="right"
+            logoUrl="/images/MX_LOGO.png"
+            colors={['#ff8660', '#9a33ff']}
+            accentColor="#ff8660"
+            menuButtonColor="#ffffff"
+            openMenuButtonColor={isDarkMode ? '#ffffff' : '#111111'}
+            items={navItems.map((item) => ({
+              label: item.name,
+              ariaLabel: `Go to ${item.name}`,
+              link: `#${item.id}`,
+              id: item.id,
+            }))}
+            socialItems={[
+              { label: 'GitHub', link: 'https://github.com/satvik8373' },
+              { label: 'LinkedIn', link: 'https://www.linkedin.com/in/satvik-patel' },
+              { label: 'Email', link: 'mailto:satvikpatel8373@gmail.com' },
+            ]}
+            displaySocials
+            displayItemNumbering
+          />
+        </Suspense>
+      )}
     </>
   )
 }

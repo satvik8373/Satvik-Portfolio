@@ -1,19 +1,71 @@
-import React, { useRef } from 'react'
-import Header from './Header'
+import React, { Suspense, lazy, useRef, useSyncExternalStore } from 'react'
 import ScrollyCanvas from './ScrollyCanvas'
 import Overlay from './Overlay'
-import Projects from './Projects'
-import About from './About'
-import TechStack from './TechStack'
-import Experience from './Experience'
-import Footer from './Footer'
+
+const Header = lazy(() => import('./Header'))
+const About = lazy(() => import('./About'))
+const TechStack = lazy(() => import('./TechStack'))
+const Projects = lazy(() => import('./Projects'))
+const Experience = lazy(() => import('./Experience'))
+const Footer = lazy(() => import('./Footer'))
+
+let sectionsReady = false
+let sectionsScheduled = false
+let idleId = null
+const sectionSubscribers = new Set()
+
+const notifySectionSubscribers = () => {
+  sectionSubscribers.forEach((notify) => notify())
+}
+
+const setSectionsReady = () => {
+  sectionsReady = true
+  notifySectionSubscribers()
+}
+
+const scheduleSectionReveal = () => {
+  if (sectionsScheduled || sectionsReady || typeof window === 'undefined') return
+
+  sectionsScheduled = true
+  const revealSections = () => {
+    const scheduleIdle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 1200))
+    idleId = scheduleIdle(setSectionsReady, { timeout: 2500 })
+  }
+
+  if (document.readyState === 'complete') {
+    revealSections()
+  } else {
+    window.addEventListener('load', revealSections, { once: true })
+  }
+}
+
+const subscribeToSectionsReady = (notify) => {
+  sectionSubscribers.add(notify)
+  scheduleSectionReveal()
+
+  return () => {
+    sectionSubscribers.delete(notify)
+    if (sectionSubscribers.size === 0 && idleId && window.cancelIdleCallback) {
+      window.cancelIdleCallback(idleId)
+      idleId = null
+      sectionsScheduled = false
+    }
+  }
+}
+
+const getSectionsReady = () => sectionsReady
 
 const Home = () => {
   const scrollyRef = useRef(null)
+  const showSections = useSyncExternalStore(subscribeToSectionsReady, getSectionsReady, () => false)
   
   return (
     <div className="relative bg-primary theme-transition min-h-screen">
-      <Header />
+      {showSections && (
+        <Suspense fallback={null}>
+          <Header />
+        </Suspense>
+      )}
       
       {/* Scrollytelling Hero Section */}
       <div id="home" className="relative" ref={scrollyRef}>
@@ -21,24 +73,28 @@ const Home = () => {
         <Overlay containerRef={scrollyRef} />
       </div>
 
-      {/* Projects Section */}
-      <Projects />
+      {showSections && (
+        <Suspense fallback={null}>
+          {/* About Section */}
+          <About />
 
-      {/* About Section */}
-      <About />
+          {/* Tech Stack */}
+          <TechStack />
 
-      {/* Tech Stack */}
-      <TechStack />
+          {/* Projects Section */}
+          <Projects />
 
-      {/* Experience Section */}
-      <div id="experience">
-        <Experience />
-      </div>
+          {/* Experience Section */}
+          <div id="experience">
+            <Experience />
+          </div>
 
-      {/* Contact/Footer Section */}
-      <div id="contact">
-        <Footer />
-      </div>
+          {/* Contact/Footer Section */}
+          <div id="contact">
+            <Footer />
+          </div>
+        </Suspense>
+      )}
     </div>
   )
 }

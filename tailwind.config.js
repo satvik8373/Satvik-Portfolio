@@ -8,9 +8,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'poppins': ['Poppins', 'sans-serif'],
-        'jakarta': ['Plus Jakarta Sans', 'sans-serif'],
-        'inter': ['Inter', 'sans-serif'],
+        'poppins': ['ui-sans-serif', 'system-ui', 'sans-serif'],
+        'jakarta': ['ui-sans-serif', 'system-ui', 'sans-serif'],
+        'inter': ['ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         // Theme-aware colors using CSS custom properties

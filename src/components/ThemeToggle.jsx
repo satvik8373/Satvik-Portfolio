@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as m, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 
 const ThemeToggle = ({ 
@@ -48,7 +48,7 @@ const ThemeToggle = ({
     <div className={`flex items-center gap-2 ${className}`}>
       {/* Main Theme Toggle */}
       <div className="relative">
-        <motion.button
+        <m.button
           onClick={handleToggle}
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
@@ -63,11 +63,11 @@ const ThemeToggle = ({
           whileTap={{ scale: 0.95 }}
           disabled={isTransitioning}
           aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
-          aria-pressed={isDarkMode}
+          aria-checked={isDarkMode}
           role="switch"
         >
           {/* Background gradient animation */}
-          <motion.div
+          <m.div
             className="absolute inset-0 rounded-full"
             animate={{
               background: isDarkMode 
@@ -80,7 +80,7 @@ const ThemeToggle = ({
           {/* Icon container */}
           <div className="relative z-10 w-full h-full flex items-center justify-center">
             {/* Sun Icon */}
-            <motion.div
+            <m.div
               className="absolute"
               animate={{
                 scale: isDarkMode ? 0 : 1,
@@ -104,10 +104,10 @@ const ThemeToggle = ({
                 <circle cx="12" cy="12" r="5"/>
                 <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
               </svg>
-            </motion.div>
+            </m.div>
             
             {/* Moon Icon */}
-            <motion.div
+            <m.div
               className="absolute"
               animate={{
                 scale: isDarkMode ? 1 : 0,
@@ -130,32 +130,32 @@ const ThemeToggle = ({
               >
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               </svg>
-            </motion.div>
+            </m.div>
             
             {/* Loading spinner during transition */}
             <AnimatePresence>
               {isTransitioning && (
-                <motion.div
+                <m.div
                   className="absolute inset-0 flex items-center justify-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <motion.div
+                  <m.div
                     className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full"
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                   />
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>
           
           {/* Ripple effect on click */}
-          <motion.div
+          <m.div
             className="absolute inset-0 rounded-full pointer-events-none"
-            initial={{ scale: 0, opacity: 0.5 }}
-            animate={{ scale: 0, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0.5 }}
+            animate={{ scale: 0.95, opacity: 0 }}
             whileTap={{ scale: 1.5, opacity: 0 }}
             transition={{ duration: 0.3 }}
             style={{
@@ -164,12 +164,12 @@ const ThemeToggle = ({
                 : 'radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, transparent 70%)'
             }}
           />
-        </motion.button>
+        </m.button>
 
         {/* Tooltip */}
         <AnimatePresence>
           {showTooltip && (
-            <motion.div
+            <m.div
               className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-50"
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
@@ -180,24 +180,24 @@ const ThemeToggle = ({
                 Switch to {isDarkMode ? 'light' : 'dark'} mode
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* Theme Label */}
       {showLabel && (
-        <motion.span 
+        <m.span 
           className="text-sm font-medium text-secondary theme-transition"
           animate={{ opacity: isTransitioning ? 0.5 : 1 }}
         >
           {theme === 'dark' ? 'Dark' : 'Light'} Mode
-        </motion.span>
+        </m.span>
       )}
 
       {/* Contrast Mode Toggle */}
       {showContrastToggle && (
-        <motion.button
+        <m.button
           onClick={toggleContrastMode}
           className="text-xs px-2 py-1 rounded bg-tertiary text-secondary hover-bg-secondary theme-transition focus-theme"
           whileHover={{ scale: 1.05 }}
@@ -207,7 +207,7 @@ const ThemeToggle = ({
           {contrastMode === 'normal' && 'A'}
           {contrastMode === 'high' && 'A+'}
           {contrastMode === 'auto' && 'A*'}
-        </motion.button>
+        </m.button>
       )}
     </div>
   );

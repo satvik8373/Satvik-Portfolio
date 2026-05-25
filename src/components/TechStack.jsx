@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion as m } from 'framer-motion'
 import { useTheme } from '../context/ThemeContext'
 
 const TechStack = () => {
@@ -8,26 +8,26 @@ const TechStack = () => {
   const techCategories = [
     {
       title: "Certificates",
-      techs: ["JavaScript Mastery – Udemy/Coursera", "Responsive Web Design – freeCodeCamp", "MERN Stack Bootcamp"]
+      techs: ["React.js Full-Time Professional Course - TOPS Technologies", "Responsive Web Design - freeCodeCamp", "JavaScript Mastery - Udemy / Coursera"]
     },
     {
       title: "Tools & Technologies",
-      techs: ["Git", "GitHub", "VS Code", "Vercel", "Netlify", "Firebase", "Tailwind CSS"]
+      techs: ["Git", "GitHub", "Vercel", "Render", "Postman", "WordPress", "Firebase", "Tailwind CSS"]
     },
     {
       title: "Languages",
-      techs: ["English", "Hindi", "Gujarati"]
+      techs: ["English (Professional)", "Hindi (Native)", "Gujarati (Native)"]
     },
     {
-      title: "Hobbies & Interests",
-      techs: ["Gaming", "Indoor Games", "Learning new tech tools"]
+      title: "AI Development",
+      techs: ["ChatGPT Codex", "Claude", "Cursor AI", "Kiro", "Antigravity", "Emergent AI", "GitHub Copilot"]
     }
   ];
   
   return (
     <section className="py-10 px-6">
       <div className="max-w-7xl mx-auto">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -36,7 +36,7 @@ const TechStack = () => {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {techCategories.map((category, idx) => (
-              <motion.div 
+              <m.div 
                 key={category.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -54,10 +54,10 @@ const TechStack = () => {
                     </span>
                   ))}
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   )

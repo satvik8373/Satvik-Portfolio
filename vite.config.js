@@ -7,7 +7,11 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'script-defer',
       includeAssets: ['icons/*.png', 'favicon.ico'],
+      workbox: {
+        globIgnores: ['**/ezgif-split/**']
+      },
       manifest: {
         name: 'Satvik Patel Portfolio',
         short_name: 'Satvik Portfolio',

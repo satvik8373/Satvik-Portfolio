@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   initializeTheme, 
   toggleTheme as toggleThemeUtil, 
-  getCurrentTheme,
   applyTheme,
   validateContrast,
   autoFixContrast
@@ -19,21 +18,22 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('preferred-theme');
+    if (savedTheme) return savedTheme;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [contrastMode, setContrastMode] = useState('normal'); // normal, high, auto
 
   useEffect(() => {
-    // Initialize theme system
-    initializeTheme();
-    setTheme(getCurrentTheme());
-
     // Listen for theme changes
     const handleThemeChange = (event) => {
       setTheme(event.detail.theme);
     };
 
     window.addEventListener('themeChanged', handleThemeChange);
+    initializeTheme();
     return () => window.removeEventListener('themeChanged', handleThemeChange);
   }, []);
 

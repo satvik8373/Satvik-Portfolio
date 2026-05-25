@@ -1,7 +1,17 @@
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion as m } from 'framer-motion'
 import { useTheme } from '../context/ThemeContext'
 import MagicBento from './MagicBento'
+
+const BENTO_FEATURES = {
+  stars: true,
+  spotlight: true,
+  borderGlow: true,
+  animations: true,
+  tilt: true,
+  clickEffect: true,
+  magnetism: true,
+}
 
 const About = () => {
   const { isDarkMode } = useTheme()
@@ -9,7 +19,7 @@ const About = () => {
   return (
     <section id="about" className="py-28 px-6">
       <div className="max-w-7xl mx-auto">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -21,7 +31,7 @@ const About = () => {
           </h2>
           
           {/* Magic Bento Grid */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -30,18 +40,13 @@ const About = () => {
           >
             <MagicBento 
               textAutoHide={true}
-              enableStars={true}
-              enableSpotlight={true}
-              enableBorderGlow={true}
-              enableTilt={true}
-              enableMagnetism={true}
-              clickEffect={true}
+              features={BENTO_FEATURES}
               spotlightRadius={300}
               particleCount={12}
               glowColor="132, 0, 255"
             />
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       </div>
     </section>
   )

@@ -1,0 +1,223 @@
+[1mreact-doctor[22m [2mv0.2.6[22m
+
+[32m✔[39m Select projects to scan [2m›[22m developer-portfolio
+[90mScanning E:\satvik potfolio...[39m
+
+
+
+  [33m⚠[39m [33mdeslop/unused-file                            [39m [90m×25[39m
+[90m      Unused file — not reachable from any entry point[39m
+[90m      → Delete the file if it is truly unreachable, or import it from an entry point.[39m
+[90m      public/debug.js[39m
+[90m      src/AnimatedBackground.jsx[39m
+[90m      src/App.jsx[39m
+[90m      src/Squares.jsx[39m
+[90m      src/components/About.jsx[39m
+[90m      src/components/Experience.jsx[39m
+[90m      src/components/FlowingMenu.jsx[39m
+[90m      src/components/Footer.jsx[39m
+[90m      src/components/Header.jsx[39m
+[90m      src/components/Hero.jsx[39m
+[90m      src/components/Home.jsx[39m
+[90m      src/components/MagicBento.jsx[39m
+[90m      src/components/Overlay.jsx[39m
+[90m      src/components/Projects.jsx[39m
+[90m      src/components/ScrollyCanvas.jsx[39m
+[90m      src/components/Shuffle.jsx[39m
+[90m      src/components/StaggeredMenu.jsx[39m
+[90m      src/components/TechStack.jsx[39m
+[90m      src/components/TestComponent.jsx[39m
+[90m      src/components/ThemeDebugPanel.jsx[39m
+[90m      src/components/ThemeShowcase.jsx[39m
+[90m      src/components/ThemeToggle.jsx[39m
+[90m      src/components/TrueFocus.jsx[39m
+[90m      src/context/ThemeContext.jsx[39m
+[90m      src/utils/themeUtils.js[39m
+
+  [33m⚠[39m [33mreact-doctor/use-lazy-motion                  [39m [90m×11[39m
+[90m      Import "m" with LazyMotion instead of "motion" — saves ~30kb in bundle size[39m
+[90m      → Use `import { LazyMotion, m } from "framer-motion"` with `domAnimation` features — saves ~30kb[39m
+[90m      src/components/TechStack.jsx:2[39m
+[90m      src/components/About.jsx:2[39m
+[90m      src/components/ThemeShowcase.jsx:2[39m
+[90m      src/components/Footer.jsx:2[39m
+[90m      src/components/ThemeDebugPanel.jsx:2[39m
+[90m      src/components/Hero.jsx:2[39m
+[90m      src/components/Overlay.jsx:1[39m
+[90m      src/components/Header.jsx:2[39m
+[90m      src/components/Experience.jsx:2[39m
+[90m      src/components/ThemeToggle.jsx:2[39m
+[90m      src/components/TrueFocus.jsx:2[39m
+
+  [33m⚠[39m [33mreact-doctor/button-has-type                  [39m [90m×8[39m
+[90m      `<button>` elements must have an explicit `type` attribute.[39m
+[90m      → Set `type="button"` (or `"submit"` / `"reset"`) explicitly on every `<button>`.[39m
+[90m      src/components/ThemeShowcase.jsx:106[39m
+[90m      src/components/ThemeShowcase.jsx:109[39m
+[90m      src/components/ThemeShowcase.jsx:112[39m
+[90m      src/components/ThemeShowcase.jsx:166[39m
+[90m      src/components/ThemeDebugPanel.jsx:82[39m
+[90m      src/components/ThemeDebugPanel.jsx:111[39m
+[90m      src/components/ThemeDebugPanel.jsx:123[39m
+[90m      src/components/ThemeDebugPanel.jsx:144[39m
+
+  [33m⚠[39m [33mreact-doctor/no-initialize-state              [39m [90m×6[39m
+[90m      Avoid initializing state in an effect. Instead, initialize "theme"'s `useState()` with "getCurrentTheme()". For SSR hydration, prefer `useSyncExternalStore()`.[39m
+[90m      → Pass the initial value directly to useState() instead of setting it from a mount-only useEffect. For SSR hydration, prefer useSyncExternalStore().[39m
+[90m      src/context/ThemeContext.jsx:29[39m
+[90m      src/components/ScrollyCanvas.jsx:24[39m
+[90m      src/components/ScrollyCanvas.jsx:84[39m
+[90m      src/components/Shuffle.jsx:46[39m
+[90m      src/components/Shuffle.jsx:48[39m
+[90m      src/components/MagicBento.jsx:482[39m
+
+  [33m⚠[39m [33mreact-doctor/no-array-index-key               [39m [90m×6[39m
+[90m      Array index in `key` doesn't uniquely identify the element — re-renders may use stale state.[39m
+[90m      → Use a stable, data-derived `key` instead of the array index.[39m
+[90m      src/components/FlowingMenu.jsx:10[39m
+[90m      src/components/ThemeDebugPanel.jsx:154[39m
+[90m      src/components/Experience.jsx:108[39m
+[90m      src/components/TrueFocus.jsx:67[39m
+[90m      src/components/MagicBento.jsx:538[39m
+[90m      src/components/MagicBento.jsx:560[39m
+
+  [33m⚠[39m [33mreact-doctor/no-array-index-as-key            [39m [90m×6[39m
+[90m      Array index "idx" used as key — causes bugs when list is reordered or filtered[39m
+[90m      → Use a stable unique identifier: `key={item.id}` or `key={item.slug}` — index keys break on reorder/filter[39m
+[90m      src/components/FlowingMenu.jsx:10[39m
+[90m      src/components/ThemeDebugPanel.jsx:154[39m
+[90m      src/components/Experience.jsx:108[39m
+[90m      src/components/TrueFocus.jsx:67[39m
+[90m      src/components/MagicBento.jsx:538[39m
+[90m      src/components/MagicBento.jsx:560[39m
+
+  [33m⚠[39m [33mreact-doctor/rerender-state-only-in-handlers  [39m [90m×5[39m
+[90m      useState "windowSize" is updated but never read in the component's return — use useRef so updates don't trigger re-renders[39m
+[90m      → Replace useState with useRef when the value is only mutated and never read in render — `ref.current = ...` updates without re-rendering the component[39m
+[90m      src/Squares.jsx:11[39m
+[90m      src/components/ScrollyCanvas.jsx:7[39m
+[90m      src/components/ScrollyCanvas.jsx:8[39m
+[90m      src/components/Shuffle.jsx:35[39m
+[90m      src/components/TrueFocus.jsx:15[39m
+
+  [33m⚠[39m [33mdeslop/unused-dependency                      [39m [90m×5[39m
+[90m      Unused dependency: `@react-three/drei`[39m
+[90m      → Remove the dependency from package.json if it is genuinely unused.[39m
+[90m      package.json[39m
+
+  [33m⚠[39m [33mreact-doctor/rerender-memo-with-default-value [39m [90m×4[39m
+[90m      Default prop value [] creates a new array reference every render — extract to a module-level constant[39m
+[90m      → Move to module scope: `const EMPTY_ITEMS: Item[] = []` then use as the default value[39m
+[90m      src/components/StaggeredMenu.jsx:8[39m
+[90m      src/components/StaggeredMenu.jsx:9[39m
+[90m      src/components/FlowingMenu.jsx:5[39m
+[90m      src/components/Shuffle.jsx:12[39m
+
+  [33m⚠[39m [33mreact-doctor/exhaustive-deps                  [39m [90m×3[39m
+[90m      React Hook `useEffect` is missing dependency `analyzeContrast` — list it in the dependency array, or call the hook unconditionally.[39m
+[90m      → List every value the hook callback captures in its dependency array.[39m
+[90m      src/components/ThemeDebugPanel.jsx:37[39m
+[90m      src/components/Shuffle.jsx:306[39m
+[90m      src/components/MagicBento.jsx:175[39m
+
+  [33m⚠[39m [33mreact-doctor/no-giant-component               [39m [90m×2[39m
+[90m      Component "StaggeredMenu" is 355 lines — consider breaking it into smaller focused components[39m
+[90m      → Extract logical sections into focused components: `<UserHeader />`, `<UserActions />`, etc.[39m
+[90m      src/components/StaggeredMenu.jsx:5[39m
+[90m      src/components/Shuffle.jsx:9[39m
+
+  [33m⚠[39m [33mreact-doctor/control-has-associated-label     [39m [90m×2[39m
+[90m      A control must be associated with a text label — add visible text, `aria-label`, or `aria-labelledby`.[39m
+[90m      → Every interactive control must have an accessible label.[39m
+[90m      src/components/ThemeShowcase.jsx:122[39m
+[90m      src/components/ThemeShowcase.jsx:132[39m
+
+  [33m⚠[39m [33mreact-doctor/no-adjust-state-on-prop-change   [39m [90m×2[39m
+[90m      Avoid adjusting state when a prop changes. Instead, adjust the state directly during render, or refactor your state to avoid this need entirely.[39m
+[90m      → Adjust the state inline during render instead of via a useEffect, or refactor the state to avoid the need entirely. See https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes[39m
+[90m      src/Squares.jsx:50[39m
+[90m      src/components/TrueFocus.jsx:37[39m
+
+  [33m⚠[39m [33mreact-doctor/no-chain-state-updates           [39m [90m×2[39m
+[90m      Avoid chaining state changes. When possible, update all relevant state simultaneously.[39m
+[90m      → Update all related state simultaneously inside the event handler that originally fires, instead of reacting to one state update in a useEffect that writes another state. See https://react.dev/learn/you-might-not-need-an-effect#chains-of-computations[39m
+[90m      src/Squares.jsx:50[39m
+[90m      src/components/ThemeDebugPanel.jsx:35[39m
+
+  [33m⚠[39m [33mreact-doctor/no-scale-from-zero               [39m [90m×2[39m
+[90m      scale: 0 makes elements appear from nowhere — use scale: 0.95 with opacity: 0 for natural entrance[39m
+[90m      → Use `initial={{ scale: 0.95, opacity: 0 }}` — elements should deflate like a balloon, not vanish into a point[39m
+[90m      src/components/Hero.jsx:19[39m
+[90m      src/components/ThemeToggle.jsx:157[39m
+
+  [33m⚠[39m [33mreact-doctor/js-combine-iterations[39m
+[90m      .filter().map() iterates the array twice — combine into a single loop with .reduce() or for...of[39m
+[90m      → Combine `.map().filter()` (or similar chains) into a single pass with `.reduce()` or a `for...of` loop to avoid iterating the array twice[39m
+[90m      public/service-worker.js:38[39m
+
+  [33m⚠[39m [33mreact-doctor/rendering-hydration-mismatch-time[39m
+[90m      new Date() reachable from JSX renders differently on server vs client — wrap in useEffect+useState (client-only) or add suppressHydrationWarning to the parent if intentional[39m
+[90m      → Wrap dynamic time/random values in useEffect+useState (client-only) or add suppressHydrationWarning to the parent if intentional[39m
+[90m      src/components/Footer.jsx:64[39m
+
+  [33m⚠[39m [33mreact-doctor/no-permanent-will-change[39m
+[90m      Permanent will-change wastes GPU memory — apply only during active animation and remove after[39m
+[90m      → Add will-change on animation start (`onMouseEnter`) and remove on end (`onAnimationEnd`). Permanent promotion wastes GPU memory and can degrade performance[39m
+[90m      src/components/ScrollyCanvas.jsx:199[39m
+
+  [33m⚠[39m [33mreact-doctor/no-event-handler[39m
+[90m      Avoid using state and effects as an event handler. Instead, call the event handling code directly when the event occurs.[39m
+[90m      → Move the side effect into the event handler that triggers it, instead of guarding on its state inside a useEffect. See https://react.dev/learn/you-might-not-need-an-effect#sharing-logic-between-event-handlers[39m
+[90m      src/components/ThemeDebugPanel.jsx:34[39m
+
+  [33m⚠[39m [33mreact-doctor/design-no-three-period-ellipsis[39m
+[90m      Three-period ellipsis ("...") in JSX text — use the actual ellipsis character "…" (or `&hellip;`)[39m
+[90m      → Use the typographic ellipsis "…" (or `&hellip;`) instead of three periods — pairs with action-with-followup labels ("Rename…", "Loading…")[39m
+[90m      src/components/ThemeDebugPanel.jsx:175[39m
+
+  [33m⚠[39m [33mreact-doctor/js-cache-storage[39m
+[90m      localStorage.getItem("preferred-theme") called multiple times — cache the result in a variable[39m
+[90m      → Cache repeated `localStorage`/`sessionStorage` reads in a local variable — each access serializes/deserializes[39m
+[90m      src/utils/themeUtils.js:204[39m
+
+  [33m⚠[39m [33mreact-doctor/anchor-is-valid[39m
+[90m      `<a>` element has invalid `href` (`#`, `javascript:`, or empty) — provide a real destination.[39m
+[90m      → Anchors must have a valid destination — use `<button>` for in-page actions.[39m
+[90m      src/components/Hero.jsx:95[39m
+
+  [33m⚠[39m [33mreact-doctor/no-prop-callback-in-effect[39m
+[90m      useEffect calls prop callback "onShuffleComplete" with local state in deps — this is the "lift state via callback" anti-pattern; lift state into a shared Provider so both sides read the same source[39m
+[90m      → Lift the shared state into a Provider so both sides read the same source — no useEffect-driven sync needed[39m
+[90m      src/components/Shuffle.jsx:54[39m
+
+  [33m⚠[39m [33mreact-doctor/js-batch-dom-css[39m
+[90m      Multiple sequential element.style assignments — batch with cssText or classList for fewer reflows[39m
+[90m      → Batch DOM/CSS reads and writes — interleaving them inside a loop causes layout thrashing. Read first, then write[39m
+[90m      src/components/Shuffle.jsx:196[39m
+
+  [33m⚠[39m [33mreact-doctor/client-passive-event-listeners[39m
+[90m      "scroll" listener without { passive: true } — blocks scrolling performance. Only add { passive: true } if the handler does NOT call event.preventDefault() (passive listeners silently ignore preventDefault())[39m
+[90m      → Add `{ passive: true }` as the third argument: `addEventListener('scroll', handler, { passive: true })`. Only do this if the handler does NOT call `event.preventDefault()` — passive listeners silently ignore `preventDefault()`, which breaks features like pull-to-refresh suppression, custom gestures, and nested-scroll containment.[39m
+[90m      src/components/Header.jsx:39[39m
+
+  [33m⚠[39m [33mreact-doctor/no-derived-state[39m
+[90m      Avoid storing derived state. Compute "focusRect" directly during render, optionally with `useMemo` if it's expensive.[39m
+[90m      → Compute derived state inline during render (or with useMemo if expensive) instead of mirroring it into useState via a useEffect. See https://react.dev/learn/you-might-not-need-an-effect#updating-state-based-on-props-or-state[39m
+[90m      src/components/TrueFocus.jsx:37[39m
+
+  [33m⚠[39m [33mreact-doctor/no-many-boolean-props[39m
+[90m      Component "MagicBento" takes 6 boolean-like props (enableStars, enableSpotlight, enableBorderGlow…) — consider compound components or explicit variants instead of stacking flags[39m
+[90m      → Split into compound components or named variants: `<Button.Primary />`, `<DialogConfirm />` instead of stacking `isPrimary`, `isConfirm` flags[39m
+[90m      src/components/MagicBento.jsx:490[39m
+
+  [32m┌─────┐[39m  [32m81[39m [2m/ 100[22m [32mGreat[39m
+  [32m│ ◠ ◠ │[39m  [32m█████████████████████████████████████████[39m[2m░░░░░░░░░[22m
+  [32m│  ▽  │[39m  React Doctor [2m(www.react.doctor)[22m
+  [32m└─────┘[39m
+
+  [33m101 issues[39m [2macross 27/150 files  in 2.3s[22m
+[90m  Full diagnostics written to C:\Users\ASUS\AppData\Local\Temp\react-doctor-d1f2f257-c588-4279-9be8-a8415218b98d[39m
+
+  [1m→ Share your results:[22m [36mhttps://www.react.doctor/share?p=developer-portfolio&s=81&w=101&f=27[39m
+
+

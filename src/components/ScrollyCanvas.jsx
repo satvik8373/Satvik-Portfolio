@@ -1,18 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
-import { useScroll } from 'framer-motion'
+
+const frameCount = 192
+const framePath = (index) => {
+  const frameNumber = String(index).padStart(3, '0')
+  return `/ezgif-split/frame_${frameNumber}_delay-0.041s.webp`
+}
+
+const clampFrameIndex = (index) => Math.min(Math.max(index, 0), frameCount - 1)
+
+const getScrollProgress = (element) => {
+  if (!element) return 0
+  const rect = element.getBoundingClientRect()
+  const scrollableDistance = Math.max(rect.height - window.innerHeight, 1)
+  return Math.min(Math.max(-rect.top / scrollableDistance, 0), 1)
+}
 
 const ScrollyCanvas = () => {
   const containerRef = useRef(null)
   const canvasRef = useRef(null)
-  const [images, setImages] = useState([])
-  const [imagesLoaded, setImagesLoaded] = useState(false)
-  const [isDarkTheme, setIsDarkTheme] = useState(true)
+  const [isDarkTheme, setIsDarkTheme] = useState(() => document.documentElement.getAttribute('data-theme') !== 'light')
   const [gradientOpacity, setGradientOpacity] = useState(0)
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end']
-  })
 
   // Detect theme changes
   useEffect(() => {
@@ -20,8 +27,6 @@ const ScrollyCanvas = () => {
       const theme = document.documentElement.getAttribute('data-theme')
       setIsDarkTheme(theme !== 'light')
     }
-    
-    updateTheme()
     
     const observer = new MutationObserver(updateTheme)
     observer.observe(document.documentElement, {
@@ -34,7 +39,12 @@ const ScrollyCanvas = () => {
 
   // Control gradient opacity based on scroll progress
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on('change', (progress) => {
+    let animationFrameId = null
+
+    const updateGradient = () => {
+      animationFrameId = null
+      const progress = getScrollProgress(containerRef.current)
+
       // Start showing gradient at 85% scroll, fully visible at 95%
       if (progress < 0.85) {
         setGradientOpacity(0)
@@ -44,90 +54,142 @@ const ScrollyCanvas = () => {
       } else {
         setGradientOpacity(1)
       }
-    })
-    
-    return () => unsubscribe()
-  }, [scrollYProgress])
-
-  // Preload images with priority loading
-  useEffect(() => {
-    const frameCount = 192
-    const loadedImages = new Array(frameCount)
-    let loadedCount = 0
-
-    const preloadImages = () => {
-      // Load first frame immediately
-      const firstImg = new Image()
-      firstImg.src = `/ezgif-split/frame_000_delay-0.041s.webp`
-      firstImg.onload = () => {
-        loadedImages[0] = firstImg
-        setImages([...loadedImages])
-        setImagesLoaded(true) // Show canvas immediately with first frame
-      }
-      
-      // Load remaining frames in background
-      for (let i = 1; i < frameCount; i++) {
-        const img = new Image()
-        const frameNumber = String(i).padStart(3, '0')
-        img.src = `/ezgif-split/frame_${frameNumber}_delay-0.041s.webp`
-        
-        img.onload = () => {
-          loadedCount++
-          loadedImages[i] = img
-          if (loadedCount % 10 === 0 || loadedCount === frameCount - 1) {
-            setImages([...loadedImages])
-          }
-        }
-      }
     }
 
-    preloadImages()
+    const scheduleGradientUpdate = () => {
+      if (animationFrameId) return
+      animationFrameId = requestAnimationFrame(updateGradient)
+    }
+
+    updateGradient()
+    window.addEventListener('scroll', scheduleGradientUpdate, { passive: true })
+    
+    return () => {
+      window.removeEventListener('scroll', scheduleGradientUpdate)
+      if (animationFrameId) cancelAnimationFrame(animationFrameId)
+    }
   }, [])
 
-  // Optimized canvas rendering
+  // Preload images and render frames directly to canvas.
   useEffect(() => {
-    if (!imagesLoaded || images.length === 0) return
-
     const canvas = canvasRef.current
     if (!canvas) return
-    
-    const ctx = canvas.getContext('2d', { 
+
+    const loadedImages = new Array(frameCount)
+    let animationFrameId = null
+    let smoothingFrameId = null
+    let lastFrameIndex = -1
+    let lastRenderedIndex = -1
+    let lastRenderedImage = null
+    let currentFrame = 0
+    let targetFrame = 0
+    let isResizing = false
+    let resizeTimeout
+    let isCancelled = false
+    let idlePreloadId = null
+    let canPreloadAhead = false
+    let preloadDelayId = null
+    const loadingFrames = new Set()
+
+    const ctx = canvas.getContext('2d', {
       alpha: false,
       desynchronized: true,
       willReadFrequently: false
     })
 
-    let animationFrameId = null
-    let lastFrameIndex = -1
-    let isResizing = false
+    const findNearestLoadedFrame = (targetIndex) => {
+      if (loadedImages[targetIndex]) return targetIndex
 
-    const render = () => {
-      const scrollProgress = scrollYProgress.get()
-      const frameIndex = Math.min(
-        Math.floor(scrollProgress * (images.length - 1)),
-        images.length - 1
-      )
+      for (let distance = 1; distance <= 12; distance += 1) {
+        const previousIndex = targetIndex - distance
+        const nextIndex = targetIndex + distance
 
-      // Skip if same frame and not resizing
-      if (frameIndex === lastFrameIndex && !isResizing) return
-      lastFrameIndex = frameIndex
+        if (previousIndex >= 0 && loadedImages[previousIndex]) return previousIndex
+        if (nextIndex < frameCount && loadedImages[nextIndex]) return nextIndex
+      }
 
-      const img = images[frameIndex]
+      return lastRenderedImage ? lastRenderedIndex : 0
+    }
+
+    const loadFrame = (index, fetchPriority = 'auto') => {
+      const nextIndex = clampFrameIndex(index)
+      if (loadedImages[nextIndex] || loadingFrames.has(nextIndex)) return
+
+      loadingFrames.add(nextIndex)
+      const img = new Image()
+      img.decoding = 'async'
+      img.fetchPriority = fetchPriority
+      img.src = framePath(nextIndex)
+
+      img.onload = () => {
+        loadingFrames.delete(nextIndex)
+        if (isCancelled) return
+        loadedImages[nextIndex] = img
+        scheduleRender()
+      }
+
+      img.onerror = () => {
+        loadingFrames.delete(nextIndex)
+      }
+    }
+
+    const preloadAroundFrame = (frameIndex) => {
+      const direction = frameIndex >= lastFrameIndex ? 1 : -1
+      loadFrame(frameIndex)
+
+      if (!canPreloadAhead) return
+
+      const priorityFrames = [
+        frameIndex + direction,
+        frameIndex + direction * 2,
+        frameIndex - direction,
+        frameIndex + direction * 3,
+        frameIndex - direction * 2,
+      ]
+
+      priorityFrames.forEach((index) => loadFrame(index))
+
+      const scheduleIdle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 250))
+      if (idlePreloadId) return
+
+      idlePreloadId = scheduleIdle(() => {
+        idlePreloadId = null
+        if (isCancelled) return
+
+        for (let offset = 4; offset <= 18; offset += 1) {
+          loadFrame(frameIndex + direction * offset, 'low')
+        }
+
+        for (let offset = 3; offset <= 8; offset += 1) {
+          loadFrame(frameIndex - direction * offset, 'low')
+        }
+      }, { timeout: 700 })
+    }
+
+    const drawFrame = (frameIndex) => {
+      const roundedFrameIndex = clampFrameIndex(Math.round(frameIndex))
+      const scrollProgress = getScrollProgress(containerRef.current)
+      targetFrame = scrollProgress * (frameCount - 1)
+
+      preloadAroundFrame(roundedFrameIndex)
+
+      const drawableIndex = findNearestLoadedFrame(roundedFrameIndex)
+      if (roundedFrameIndex === lastFrameIndex && drawableIndex === lastRenderedIndex && !isResizing) return
+      lastFrameIndex = roundedFrameIndex
+
+      const img = loadedImages[drawableIndex] || lastRenderedImage
       if (!img || !img.complete) return
 
-      // Cap DPR at 2 for performance
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      
       const displayWidth = window.innerWidth
       const displayHeight = window.innerHeight
-      
-      // Only resize if dimensions changed
+
       if (canvas.width !== displayWidth * dpr || canvas.height !== displayHeight * dpr) {
         canvas.width = displayWidth * dpr
         canvas.height = displayHeight * dpr
         canvas.style.width = `${displayWidth}px`
         canvas.style.height = `${displayHeight}px`
-        ctx.scale(dpr, dpr)
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       }
 
       ctx.imageSmoothingEnabled = true
@@ -152,11 +214,36 @@ const ScrollyCanvas = () => {
 
       ctx.clearRect(0, 0, displayWidth, displayHeight)
       ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight)
-      
+      lastRenderedIndex = drawableIndex
+      lastRenderedImage = img
       isResizing = false
     }
 
-    // Use RAF for smooth rendering
+    const tickSmoothing = () => {
+      const distance = targetFrame - currentFrame
+      const step = Math.abs(distance) < 0.12 ? distance : distance * 0.28
+
+      currentFrame += step
+      drawFrame(currentFrame)
+
+      if (Math.abs(targetFrame - currentFrame) > 0.12 && !isCancelled) {
+        smoothingFrameId = requestAnimationFrame(tickSmoothing)
+      } else {
+        currentFrame = targetFrame
+        drawFrame(currentFrame)
+        smoothingFrameId = null
+      }
+    }
+
+    const render = () => {
+      const scrollProgress = getScrollProgress(containerRef.current)
+      targetFrame = scrollProgress * (frameCount - 1)
+
+      if (!smoothingFrameId) {
+        smoothingFrameId = requestAnimationFrame(tickSmoothing)
+      }
+    }
+
     const scheduleRender = () => {
       if (animationFrameId) return
       animationFrameId = requestAnimationFrame(() => {
@@ -165,13 +252,25 @@ const ScrollyCanvas = () => {
       })
     }
 
-    const unsubscribe = scrollYProgress.on('change', scheduleRender)
+    loadFrame(0, 'high')
+    preloadDelayId = window.setTimeout(() => {
+      canPreloadAhead = true
+      for (let index = 1; index <= 8; index += 1) {
+        loadFrame(index, 'low')
+      }
+    }, 2500)
+
+    const handleScroll = () => {
+      canPreloadAhead = true
+      scheduleRender()
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
     
     // Initial render
     render()
 
     // Optimized resize
-    let resizeTimeout
     const handleResize = () => {
       isResizing = true
       clearTimeout(resizeTimeout)
@@ -180,12 +279,16 @@ const ScrollyCanvas = () => {
     window.addEventListener('resize', handleResize, { passive: true })
 
     return () => {
-      unsubscribe()
+      isCancelled = true
+      window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', handleResize)
+      clearTimeout(preloadDelayId)
       clearTimeout(resizeTimeout)
+      if (idlePreloadId && window.cancelIdleCallback) window.cancelIdleCallback(idlePreloadId)
       if (animationFrameId) cancelAnimationFrame(animationFrameId)
+      if (smoothingFrameId) cancelAnimationFrame(smoothingFrameId)
     }
-  }, [images, imagesLoaded, scrollYProgress])
+  }, [])
 
   return (
     <div ref={containerRef} className="relative" style={{ height: '500vh' }}>
@@ -196,7 +299,9 @@ const ScrollyCanvas = () => {
           style={{ 
             objectFit: 'cover',
             imageRendering: 'auto',
-            willChange: 'contents'
+            backgroundImage: `url(${framePath(0)})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
           }}
         />
         

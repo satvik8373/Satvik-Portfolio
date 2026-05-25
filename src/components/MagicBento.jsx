@@ -7,44 +7,53 @@ const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
 const DEFAULT_GLOW_COLOR = "132, 0, 255";
 const MOBILE_BREAKPOINT = 768;
+const DEFAULT_BENTO_FEATURES = {
+  stars: true,
+  spotlight: true,
+  borderGlow: true,
+  animations: true,
+  tilt: false,
+  clickEffect: true,
+  magnetism: true,
+};
 
 // Technical Skills Data for Satvik Patel
 const getCardData = (isDarkMode) => [
   {
     color: isDarkMode ? "#060010" : "#f8fafc",
-    title: "React.js",
-    description: "Modern UI development with hooks and context",
+    title: "Frontend",
+    description: "HTML5, CSS3, JavaScript, React.js, Next.js, Tailwind CSS",
     label: "Frontend",
   },
   {
     color: isDarkMode ? "#060010" : "#f8fafc",
-    title: "Node.js",
-    description: "Server-side JavaScript and API development",
+    title: "Backend",
+    description: "Node.js, Express.js, and REST API development",
     label: "Backend",
   },
   {
     color: isDarkMode ? "#060010" : "#f8fafc",
-    title: "JavaScript",
-    description: "ES6+ features and modern development",
-    label: "Language",
-  },
-  {
-    color: isDarkMode ? "#060010" : "#f8fafc",
-    title: "MERN Stack",
-    description: "Full-stack web application development",
-    label: "Framework",
-  },
-  {
-    color: isDarkMode ? "#060010" : "#f8fafc",
-    title: "MongoDB",
-    description: "NoSQL database design and optimization",
+    title: "Database",
+    description: "MongoDB, MySQL, and Firebase integrations",
     label: "Database",
   },
   {
     color: isDarkMode ? "#060010" : "#f8fafc",
-    title: "Tailwind CSS",
-    description: "Utility-first CSS framework for rapid UI",
-    label: "Styling",
+    title: "Mobile",
+    description: "React Native, Expo, and Flutter application workflows",
+    label: "Mobile",
+  },
+  {
+    color: isDarkMode ? "#060010" : "#f8fafc",
+    title: "AI Tools",
+    description: "ChatGPT Codex, Claude, Cursor AI, Kiro, Antigravity, Emergent AI, GitHub Copilot",
+    label: "AI",
+  },
+  {
+    color: isDarkMode ? "#060010" : "#f8fafc",
+    title: "DevOps",
+    description: "Git, GitHub, Vercel, Render, Postman, and WordPress",
+    label: "Tools",
   },
 ];
 
@@ -292,7 +301,6 @@ const ParticleCard = ({
     element.addEventListener("click", handleClick);
 
     return () => {
-      isHoveredRef.current = false;
       element.removeEventListener("mouseenter", handleMouseEnter);
       element.removeEventListener("mouseleave", handleMouseLeave);
       element.removeEventListener("mousemove", handleMouseMove);
@@ -474,13 +482,12 @@ const BentoCardGrid = ({ children, gridRef }) => (
 );
 
 const useMobileDetection = () => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= MOBILE_BREAKPOINT);
 
   useEffect(() => {
     const checkMobile = () =>
       setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
+    window.addEventListener("resize", checkMobile, { passive: true });
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
@@ -489,19 +496,23 @@ const useMobileDetection = () => {
 
 const MagicBento = ({
   textAutoHide = true,
-  enableStars = true,
-  enableSpotlight = true,
-  enableBorderGlow = true,
-  disableAnimations = false,
+  features = DEFAULT_BENTO_FEATURES,
   spotlightRadius = DEFAULT_SPOTLIGHT_RADIUS,
   particleCount = DEFAULT_PARTICLE_COUNT,
-  enableTilt = false,
   glowColor = DEFAULT_GLOW_COLOR,
-  clickEffect = true,
-  enableMagnetism = true,
 }) => {
   const gridRef = useRef(null);
   const isMobile = useMobileDetection();
+  const {
+    stars: enableStars = true,
+    spotlight: enableSpotlight = true,
+    borderGlow: enableBorderGlow = true,
+    animations: enableAnimations = true,
+    tilt: enableTilt = false,
+    clickEffect = true,
+    magnetism: enableMagnetism = true,
+  } = features;
+  const disableAnimations = !enableAnimations;
   const shouldDisableAnimations = disableAnimations || isMobile;
   const { isDarkMode } = useTheme();
   
@@ -535,7 +546,7 @@ const MagicBento = ({
           if (enableStars) {
             return (
               <ParticleCard
-                key={index}
+                key={card.title}
                 {...cardProps}
                 disableAnimations={shouldDisableAnimations}
                 particleCount={particleCount}
@@ -557,7 +568,7 @@ const MagicBento = ({
 
           return (
             <div
-              key={index}
+              key={card.title}
               {...cardProps}
               ref={(el) => {
                 if (!el) return;
