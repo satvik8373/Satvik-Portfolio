@@ -1,5 +1,5 @@
 import React from 'react'
-import { createRoot, hydrateRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 
@@ -10,8 +10,4 @@ const app = (
   </React.StrictMode>
 )
 
-if (rootElement.hasChildNodes()) {
-  hydrateRoot(rootElement, app)
-} else {
-  createRoot(rootElement).render(app)
-}
+createRoot(rootElement).render(app)
