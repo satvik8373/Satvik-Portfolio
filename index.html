@@ -23,6 +23,73 @@
 </head>
 
 <body>
+  <div id="page-loader" class="loading-screen" role="status" aria-live="polite">
+    <div class="liquid-loader" aria-label="Loading Satvik portfolio">
+      <svg class="liquid-loader__svg" viewBox="0 0 1200 320" role="img" aria-hidden="true">
+        <defs>
+          <clipPath id="satvik-liquid-clip">
+            <text class="liquid-loader__clip-text" x="50%" y="58%" text-anchor="middle" dominant-baseline="middle">Satvik</text>
+          </clipPath>
+        </defs>
+        <text class="liquid-loader__shadow" x="50%" y="58%" text-anchor="middle" dominant-baseline="middle">Satvik</text>
+        <text class="liquid-loader__base" x="50%" y="58%" text-anchor="middle" dominant-baseline="middle">Satvik</text>
+        <g clip-path="url(#satvik-liquid-clip)">
+          <g class="liquid-loader__fill" transform="translate(0 196)">
+            <g class="liquid-loader__wave-track liquid-loader__wave-track--front">
+              <path class="liquid-loader__wave liquid-loader__wave--front" d="M-560 104 Q-470 62 -380 104 T-200 104 T-20 104 T160 104 T340 104 T520 104 T700 104 T880 104 T1060 104 T1240 104 T1420 104 T1600 104 T1780 104 V430 H-560 Z"></path>
+              <animateTransform attributeName="transform" type="translate" from="0 0" to="-360 0" dur="1.85s" repeatCount="indefinite"></animateTransform>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <div class="loading-screen__meta">loading... <span>0</span> %</div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var loader = document.getElementById('page-loader');
+      if (!loader) return;
+
+      var fill = loader.querySelector('.liquid-loader__fill');
+      var value = loader.querySelector('.loading-screen__meta span');
+      var startedAt = performance.now();
+      var duration = 2800;
+      var removed = false;
+      var completed = false;
+
+      function removeLoader() {
+        if (removed) return;
+        removed = true;
+        loader.classList.add('loading-screen--exit');
+        window.setTimeout(function () {
+          loader.remove();
+        }, 240);
+      }
+
+      function tick(now) {
+        var ratio = Math.min((now - startedAt) / duration, 1);
+        var progress = Math.min(Math.round(ratio * 100), 100);
+
+        if (fill) fill.setAttribute('transform', 'translate(0 ' + (196 - progress * 2.56).toFixed(2) + ')');
+        if (value) value.textContent = String(progress);
+
+        if (ratio < 1) {
+          requestAnimationFrame(tick);
+        } else if (!completed) {
+          completed = true;
+          loader.classList.add('loading-screen--complete');
+          window.setTimeout(removeLoader, 980);
+        }
+      }
+
+      requestAnimationFrame(tick);
+      window.setTimeout(removeLoader, 4080);
+      window.addEventListener('load', function () {
+        var elapsed = performance.now() - startedAt;
+        window.setTimeout(removeLoader, Math.max(0, 3800 - elapsed));
+      }, { once: true });
+    }());
+  </script>
   <div id="root">
     <div class="relative bg-primary theme-transition min-h-screen">
       <div id="home" class="relative">
