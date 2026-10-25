@@ -1,39 +1,22 @@
 {
-  "name": "developer-portfolio",
+  "name": "satvik-portfolio",
   "version": "1.0.0",
-  "description": "Modern developer portfolio and community website",
+  "private": true,
   "type": "module",
-  "main": "src/main.jsx",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "doctor": "react-doctor",
-    "postinstall": "patch-package"
+    "start": "node server.mjs",
+    "dev": "node server.mjs",
+    "preview": "node server.mjs --dist",
+    "build": "node tools/build-portfolio.mjs && node tools/build-static.mjs",
+    "test": "node tools/verify-portfolio.mjs"
   },
-  "dependencies": {
-    "@gsap/react": "^2.1.2",
-    "framer-motion": "^10.18.0",
-    "gsap": "^3.13.0",
-    "lucide-react": "^0.294.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
+  "engines": { "node": ">=22" },
   "devDependencies": {
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@vitejs/plugin-react": "^4.1.0",
-    "autoprefixer": "^10.4.16",
-    "eslint": "^8.53.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.4",
-    "patch-package": "^8.0.1",
-    "postcss": "^8.4.31",
-    "react-doctor": "^0.2.6",
-    "tailwindcss": "^3.3.5",
-    "vite": "^7.1.3",
-    "vite-plugin-pwa": "^0.16.7"
+    "cheerio": "^1.2.0",
+    "opentype.js": "^2.0.0",
+    "pixelmatch": "^8.0.0",
+    "playwright-core": "^1.64.1",
+    "pngjs": "^7.0.0",
+    "sharp": "^0.35.5"
   }
 }

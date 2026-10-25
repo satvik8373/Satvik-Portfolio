@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+   <rect width="1600" height="1000" fill="#fae3e2"/>
+   <circle cx="1312" cy="240" r="560" fill="none" stroke="#ff5400" stroke-width="1.5" opacity=".12"/>
+   <circle cx="1312" cy="240" r="450" fill="none" stroke="#ff5400" stroke-width="1.5" opacity=".12"/>
+   <path d="M-100 670 Q320 200 768 750 T1700 650" fill="none" stroke="#ff5400" stroke-width="130" opacity=".07"/>
+   
+   <rect x="570" y="200" width="460" height="460" rx="70" fill="#ffffff" transform="rotate(-6 800 430)"/>
+   <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3IDBsMy0zYTUgNSAwIDAgMC03LTdsLTIgMiIvPjxwYXRoIGQ9Ik0xNCAxMWE1IDUgMCAwIDAtNyAwbC0zIDNhNSA1IDAgMCAwIDcgN2wyLTIiLz48L3N2Zz4=" x="635" y="265" width="330" height="330" preserveAspectRatio="xMidYMid meet"/>
+  </svg>

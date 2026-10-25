@@ -1,0 +1,57 @@
+export const person = {
+  name: 'Satvik Patel', role: 'Full Stack MERN Developer',
+  email: 'satvikpatel8373@gmail.com', phone: '+91 9558268373',
+  location: 'Ahmedabad, Gujarat', github: 'https://github.com/satvik8373', linkedin: 'https://www.linkedin.com/in/satvik-patel',
+  bio: 'I’m Satvik, a full stack developer from Ahmedabad. I turn ideas into thoughtful web and mobile experiences, from the first React component to the API behind it. A little design obsession. A lot of making it work.',
+};
+export const projects = [
+  {slug:'mavrixfy',name:'Mavrixfy',category:'Music streaming platform',stack:'React.js / React Native',logo:'mavrixfy.png',color:'#b9f568',ink:'#153028',url:'https://mavrixfy.site',
+   tagline:'A little more play.',summary:'A music experience with playlists, playback interfaces, responsive layouts and API-led flows.',
+   context:'Mavrixfy brings music discovery, a personal library and playback into one connected experience. The focus is a familiar, easy-to-navigate interface that works across web and mobile.',
+   approach:'The project combines React.js and React Native workflows with responsive layouts and API integrations. Playlists, a playback interface and a clear library structure keep the music at the centre.',
+   features:['Music discovery','Playlists & library','Playback interfaces','Web & mobile']},
+  {slug:'subtrack',name:'SubTrack',category:'Finance & invoice manager',stack:'MERN Stack',logo:'SubTrack_Icon.webp',color:'#ff9f35',ink:'#532305',url:'',
+   tagline:'Less admin. More clarity.',summary:'A dashboard for subscriptions, expenses, invoices, CRUD operations and backend integrations.',
+   context:'Keeping track of recurring subscriptions, everyday expenses and invoices can mean switching between several tools. SubTrack brings those workflows into a single dashboard.',
+   approach:'Built around the MERN stack, the project connects a clear frontend to backend integrations and CRUD operations. The interface groups subscriptions, expenses and invoices into focused, understandable views.',
+   features:['Subscriptions','Expense management','Invoices','CRUD & integrations']},
+  {slug:'pranshi-multiplast',name:'Pranshi Multiplast',category:'Manufacturing website',stack:'React.js',logo:'pranshi-multiplast.png',color:'#a8dff6',ink:'#143a53',url:'https://pranshimultiplast.com/',
+   tagline:'Business, clearly presented.',summary:'A responsive corporate website focused on product clarity, company presence and fast browsing.',
+   context:'A manufacturing business needs a web presence that makes its company and products easy to understand. Pranshi Multiplast’s website presents that information in a structured, accessible way.',
+   approach:'The React.js website uses responsive sections and clear content structure to help visitors explore the business across screen sizes. The focus is a professional company presence and straightforward browsing.',
+   features:['Corporate presence','Product information','Responsive sections','Clear navigation']},
+  {slug:'suryoday-fortune',name:'Suryoday Fortune',category:'Business website',stack:'React.js',logo:'suryoday-fortune.png',color:'#ead8a3',ink:'#493d1a',url:'',
+   tagline:'A brighter first impression.',summary:'A professional web presence with structured content, responsive sections and brand-first visuals.',
+   context:'Suryoday Fortune needed a professional digital presence that could communicate its brand through a clear, well-organised website.',
+   approach:'The React.js build focuses on structured content, responsive sections and visuals that put the brand first. A consistent layout supports easy reading on desktop and mobile.',
+   features:['Brand-first visuals','Structured content','Responsive layouts','React components']},
+  {slug:'biolinks',name:'BioLinks',category:'Link-in-bio page builder',stack:'Next.js / TypeScript / Firebase',logo:'biolinks-logo.svg',color:'#fae3e2',ink:'#ff5400',url:'',availability:'Project overview',
+   tagline:'One profile. Every connection.',summary:'Customisable link-in-bio pages with a visual card editor, reusable themes and shareable profiles.',
+   context:'BioLinks brings a person’s links and content together in a customisable public profile. The project focuses on making a personal link page feel considered and expressive, with a choice of visual themes and editable content blocks.',
+   approach:'Built with Next.js, React and TypeScript, the app uses Zustand for editor drafts, undo/redo and explicit save actions. A shared theme pipeline handles template customisation, while Firebase supports the application’s backend services.',
+   features:['Visual card editor','Theme customisation','Undo & redo','Shareable profiles']},
+];
+export const experience = [
+  {title:'React.js, from theory to real interfaces.',company:'TOPS Technologies',role:'React.js Trainee',period:'Sep 2025 – Jan 2026',description:'Completed a full-time React.js professional programme in Ahmedabad, building responsive applications, reusable components and practical UI flows.'},
+  {title:'Connecting the frontend to everything behind it.',company:'InnoByte Services',role:'Full Stack Developer Intern',period:'Sep 2025 – Oct 2025',description:'Worked remotely on JavaScript features and REST APIs, improving application structure through debugging, optimisation and integration work.'},
+  {title:'Building for real screens and real users.',company:'Spread Me Digital',role:'Web Developer Intern',period:'Jan 2025 – Apr 2025',description:'Built responsive interfaces in Gandhinagar, integrated backend APIs and worked with MongoDB and MySQL databases.'},
+  {title:'Still learning. Always building.',company:'Ganpat University',role:'Master’s in Information Technology',period:'Ongoing',description:'Pursuing a master’s degree in Information Technology at Ganpat University, Kherva, Gujarat.'},
+  {title:'Where the foundations came together.',company:'Ganpat University',role:'B.Sc. Information Technology',period:'Completed · CGPA 7.0',description:'Completed a Bachelor of Science in Information Technology at Ganpat University, Kherva, Gujarat.'},
+];
+export const services = [
+ ['Web','Development','React.js, Next.js, JavaScript and responsive interfaces that feel good to use.'],
+ ['Backend','APIs','Node.js, Express.js and REST APIs that connect the moving parts.'],
+ ['Mobile','Apps','React Native, Expo and Flutter workflows for experiences beyond the browser.'],
+ ['Databases','','MongoDB, MySQL and Firebase, connected to practical application workflows.'],
+ ['Responsive','UI','HTML, CSS and Tailwind CSS, with careful attention to screens of every size.'],
+ ['API','Integration','Connecting frontends, backend services and data into a coherent experience.'],
+ ['AI','Workflows','Codex, Claude, Cursor and other tools as part of a considered development workflow.'],
+];
+export const faqs = [
+ ['What do you build?','I build web and mobile applications, business websites and dashboards. My core stack is React.js, Node.js, Express.js and MongoDB, with React Native for mobile work.'],
+ ['Can I see your projects?','Absolutely. Explore the Work page for Mavrixfy, SubTrack, Pranshi Multiplast, Suryoday Fortune and BioLinks. Public projects include a live-site link; other builds have a project overview.'],
+ ['Do you work on both frontend and backend?','Yes. My work includes responsive interfaces, reusable React components, REST APIs, backend integrations and databases.'],
+ ['Where are you based?','I’m based in Ahmedabad, Gujarat, India. My experience also includes working remotely with InnoByte Services.'],
+ ['How do you use AI in development?','I use tools such as Codex, Claude and Cursor as part of my workflow, alongside hands-on implementation, debugging and integration.'],
+ ['How can we start a conversation?','Email satvikpatel8373@gmail.com with a little about your project or opportunity. You can also find me on GitHub and LinkedIn.'],
+];

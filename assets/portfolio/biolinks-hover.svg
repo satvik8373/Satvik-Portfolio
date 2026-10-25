@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1400" viewBox="0 0 1000 1400">
+   <rect width="1000" height="1400" fill="#ff5400"/>
+   <circle cx="820" cy="336" r="720" fill="none" stroke="#fae3e2" stroke-width="1.5" opacity=".12"/>
+   <circle cx="820" cy="336" r="610" fill="none" stroke="#fae3e2" stroke-width="1.5" opacity=".12"/>
+   <path d="M-100 938 Q200 280 480 1050 T1100 910" fill="none" stroke="#fae3e2" stroke-width="170" opacity=".07"/>
+   <g fill="#fae3e2" font-family="Arial,sans-serif"><text x="60" y="80" font-size="18" letter-spacing="3">SATVIK PATEL / SELECTED WORK</text><text x="940" y="80" font-size="18" text-anchor="end">05</text>
+   <text x="60" y="1254" font-weight="700" font-size="70" letter-spacing="-2">BIOLINKS</text>
+   <text x="60" y="1306" font-size="25">Link-in-bio page builder</text><text x="60" y="1352" font-size="18" opacity=".7">Next.js / TypeScript / Firebase</text>
+   <text x="930" y="1338" font-size="44" text-anchor="end">↗</text></g>
+   <rect x="225" y="327" width="550" height="550" rx="420" fill="#ffffff" transform="rotate(6 500 602)"/>
+   <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3IDBsMy0zYTUgNSAwIDAgMC03LTdsLTIgMiIvPjxwYXRoIGQ9Ik0xNCAxMWE1IDUgMCAwIDAtNyAwbC0zIDNhNSA1IDAgMCAwIDcgN2wyLTIiLz48L3N2Zz4=" x="290" y="392" width="420" height="420" preserveAspectRatio="xMidYMid meet"/>
+  </svg>

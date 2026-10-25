@@ -1,0 +1,16 @@
+{
+  "source": "https://two26.studio",
+  "routes": [
+    "/",
+    "/about",
+    "/work",
+    "/work/heygluco",
+    "/work/bagel-bar",
+    "/work/tanti-maria",
+    "/work/munchies-and-cream",
+    "/work/mvp",
+    "/work/yum-yum",
+    "/work/merci",
+    "/work/lpi"
+  ]
+}
